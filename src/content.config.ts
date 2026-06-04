@@ -37,7 +37,29 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { projects };
+/**
+ * posts — the Journal / field-notes collection (SEO + voice). One markdown file
+ * per post in src/content/posts/. Body is freeform markdown; frontmatter drives
+ * the listing, meta tags, and RSS feed.
+ *
+ * Honesty: these read as craft/approach essays in the first-person voice, never
+ * outcome claims. Drafts (`draft: true`) are excluded from the build.
+ */
+const posts = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(), // one line for the card + <meta description>
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      heroImage: image().optional(),
+      tags: z.array(z.string()).default([]),
+      draft: z.boolean().default(false),
+    }),
+});
+
+export const collections = { projects, posts };
 
 /** Display metadata for each category — single source for labels/filters. */
 export const CATEGORY_META = {

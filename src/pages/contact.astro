@@ -1,15 +1,223 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-// Full page lands in a later build step. Stub keeps nav from 404-ing.
+import { SITE } from '@/lib/site';
+
+// Static site → the form posts to a third-party form endpoint (Formspree-style
+// placeholder). Swap FORM_ENDPOINT for your real one (see README). The form
+// works without JavaScript; a tiny enhancement just shows an inline success
+// state when the endpoint returns JSON.
+const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
 ---
 
-<BaseLayout title="Contact">
-  <section class="container-rail flex min-h-[60vh] flex-col justify-center py-32">
-    <p class="eyebrow mb-4">Contact</p>
-    <h1 class="text-4xl font-semibold md:text-6xl">Coming together next.</h1>
-    <p class="mt-4 max-w-md text-ink-dim">
-      This page is being built. Back to the
-      <a href="/" class="link-underline text-ink">home page</a>.
-    </p>
+<BaseLayout
+  title="Contact"
+  description="Tell me about your race, launch, or athlete — and the outcome you need. Based in Córdoba, Argentina, shooting across Patagonia & the Andes."
+>
+  <section class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+      <!-- Left: pitch + direct details. -->
+      <div data-reveal>
+        <p class="eyebrow mb-4">Contact</p>
+        <h1
+          class="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-6xl"
+        >
+          Let’s talk about the film.
+        </h1>
+        <p class="mt-6 max-w-md text-lg leading-relaxed text-ink-dim">
+          The more you tell me about the outcome you’re after — entries,
+          sell-through, a signed athlete — the more useful my first reply will
+          be. I read every message myself.
+        </p>
+
+        <dl class="mt-10 space-y-6">
+          <div>
+            <dt class="eyebrow mb-2">Email</dt>
+            <dd>
+              <a
+                href={`mailto:${SITE.email}`}
+                class="link-underline text-lg text-ink"
+              >
+                {SITE.email}
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt class="eyebrow mb-2">Instagram</dt>
+            <dd>
+              <a
+                href={SITE.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-underline text-lg text-ink"
+              >
+                {SITE.social.instagramHandle}
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt class="eyebrow mb-2">Based in</dt>
+            <dd class="text-lg text-ink-dim">
+              {SITE.baseLocation} · shooting across {SITE.shootingRegion}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Right: the form. -->
+      <div data-reveal>
+        <form
+          id="contact-form"
+          action={FORM_ENDPOINT}
+          method="POST"
+          class="rounded-xl bg-bone-raise p-6 ring-1 ring-line md:p-8"
+        >
+          <!-- Honeypot: bots fill it, humans never see it. -->
+          <div class="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
+            <label>
+              Leave this field empty
+              <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="space-y-5">
+            <div>
+              <label for="name" class="mb-2 block text-sm font-medium text-ink">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                autocomplete="name"
+                class="form-field"
+              />
+            </div>
+
+            <div>
+              <label for="email" class="mb-2 block text-sm font-medium text-ink">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                class="form-field"
+              />
+            </div>
+
+            <div>
+              <label
+                for="message"
+                class="mb-2 block text-sm font-medium text-ink"
+              >
+                What are you building?
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                required
+                class="form-field resize-y"
+              ></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-ink mt-6 w-full justify-center">
+            Send message
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+
+          <p
+            id="form-status"
+            role="status"
+            aria-live="polite"
+            class="mt-4 text-sm text-ink-dim"
+          >
+          </p>
+
+          <p class="mt-4 text-xs leading-relaxed text-ink-faint">
+            Prefer email? Write to
+            <a href={`mailto:${SITE.email}`} class="link-underline text-ink-dim">
+              {SITE.email}
+            </a>
+            directly.
+          </p>
+        </form>
+      </div>
+    </div>
   </section>
 </BaseLayout>
+
+<style>
+  .form-field {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-bone);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    transition: border-color 0.3s var(--ease-cinematic);
+  }
+  .form-field::placeholder {
+    color: var(--color-ink-faint);
+  }
+  .form-field:focus {
+    outline: none;
+    border-color: var(--color-ink);
+  }
+</style>
+
+<script>
+  // Progressive enhancement: keep the visitor on-page on success. Without JS the
+  // form still posts normally to the endpoint.
+  function initContactForm() {
+    const form = document.getElementById(
+      'contact-form'
+    ) as HTMLFormElement | null;
+    const status = document.getElementById('form-status');
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = 'true';
+
+    form.addEventListener('submit', async (e) => {
+      // Only intercept when the endpoint has actually been configured.
+      if (form.action.includes('your-form-id')) {
+        e.preventDefault();
+        if (status) {
+          status.textContent =
+            'Form endpoint not configured yet — email me directly for now.';
+          status.style.color = 'var(--color-ink)';
+        }
+        return;
+      }
+
+      e.preventDefault();
+      if (status) status.textContent = 'Sending…';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          form.reset();
+          if (status) status.textContent = 'Thanks — I’ll be in touch soon.';
+        } else {
+          throw new Error('Bad response');
+        }
+      } catch {
+        if (status) {
+          status.textContent =
+            'Something went wrong. Please email me directly.';
+        }
+      }
+    });
+  }
+  initContactForm();
+  document.addEventListener('astro:page-load', initContactForm);
+</script>

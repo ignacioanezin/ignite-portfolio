@@ -1,0 +1,205 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { SITE } from '@/lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const { Content } = await render(post);
+
+const dateFmt = (d: Date) =>
+  d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+// BlogPosting JSON-LD for rich results.
+const postSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: data.title,
+  description: data.description,
+  datePublished: data.pubDate.toISOString(),
+  ...(data.updatedDate
+    ? { dateModified: data.updatedDate.toISOString() }
+    : {}),
+  author: { '@type': 'Person', name: SITE.name, url: SITE.url },
+  publisher: { '@type': 'Person', name: SITE.name },
+  mainEntityOfPage: new URL(`/blog/${post.id}`, SITE.url).href,
+  ...(data.heroImage
+    ? { image: new URL(data.heroImage.src, SITE.url).href }
+    : {}),
+  keywords: data.tags.join(', '),
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  ogType="article"
+>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(postSchema)}
+    slot="head"
+  />
+
+  <article class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
+    <a
+      href="/blog"
+      class="group inline-flex items-center gap-2 text-sm font-medium text-ink-dim transition-colors hover:text-ink"
+      data-reveal
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" class="transition-transform group-hover:-translate-x-1">
+        <path d="M13 8H3M7 4L3 8l4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      Journal
+    </a>
+
+    <!-- Header -->
+    <header class="mx-auto mt-8 max-w-2xl" data-reveal>
+      <p class="text-xs uppercase tracking-wider text-ink-faint">
+        <time datetime={data.pubDate.toISOString()}>{dateFmt(data.pubDate)}</time>
+        {
+          data.updatedDate && (
+            <span> · Updated {dateFmt(data.updatedDate)}</span>
+          )
+        }
+      </p>
+      <h1
+        class="mt-4 font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-5xl"
+      >
+        {data.title}
+      </h1>
+      <p class="mt-5 text-xl leading-snug text-ink-dim">{data.description}</p>
+    </header>
+
+    {
+      data.heroImage && (
+        <div class="mx-auto mt-10 max-w-4xl" data-reveal>
+          <Image
+            src={data.heroImage}
+            alt={data.title}
+            widths={[640, 1024, 1600]}
+            sizes="(min-width: 1024px) 56rem, 100vw"
+            loading="eager"
+            class="w-full rounded-xl"
+          />
+        </div>
+      )
+    }
+
+    <!-- Body -->
+    <div class="post-prose mx-auto mt-12 max-w-2xl" data-reveal>
+      <Content />
+    </div>
+
+    {
+      data.tags.length > 0 && (
+        <ul class="mx-auto mt-12 flex max-w-2xl flex-wrap gap-2" data-reveal>
+          {data.tags.map((tag) => (
+            <li class="rounded-full border border-line px-3 py-1 text-xs uppercase tracking-wider text-ink-faint">
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <!-- CTA -->
+    <div
+      class="mx-auto mt-14 max-w-2xl border-t border-line pt-10 text-center"
+      data-reveal
+    >
+      <h2 class="text-2xl font-medium tracking-tight md:text-3xl">
+        Have a race or a launch in mind?
+      </h2>
+      <p class="mx-auto mt-3 max-w-md text-ink-dim">
+        This is how I think about the work. If it fits what you’re building,
+        let’s talk.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-4">
+        <a href="/contact" class="btn-ink">
+          Start a conversation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+        <a href="/work" class="btn-ghost">See the work</a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  /* Self-contained prose — no typography plugin. Tuned to the design tokens. */
+  .post-prose {
+    font-size: 1.075rem;
+    line-height: 1.75;
+    color: var(--color-ink-dim);
+  }
+  .post-prose :global(p) {
+    margin-block: 1.25em;
+  }
+  .post-prose :global(h2) {
+    margin-block: 2em 0.6em;
+    font-size: 1.6rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .post-prose :global(h3) {
+    margin-block: 1.6em 0.5em;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .post-prose :global(ul),
+  .post-prose :global(ol) {
+    margin-block: 1.25em;
+    padding-left: 1.25em;
+  }
+  .post-prose :global(ul) {
+    list-style: disc;
+  }
+  .post-prose :global(ol) {
+    list-style: decimal;
+  }
+  .post-prose :global(li) {
+    margin-block: 0.4em;
+    padding-left: 0.25em;
+  }
+  .post-prose :global(li::marker) {
+    color: var(--color-ink-faint);
+  }
+  .post-prose :global(strong) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .post-prose :global(a) {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .post-prose :global(blockquote) {
+    margin-block: 1.5em;
+    padding-left: 1.1em;
+    border-left: 2px solid var(--color-line);
+    font-style: italic;
+    color: var(--color-ink);
+  }
+  .post-prose :global(em) {
+    font-style: italic;
+  }
+</style>

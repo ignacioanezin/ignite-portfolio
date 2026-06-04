@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -15,7 +16,7 @@ export default defineConfig({
   adapter: vercel({
     webAnalytics: { enabled: false },
   }),
-  integrations: [react()],
+  integrations: [react(), sitemap()],
   // Smooth, native cross-page transitions (the "slow camera move" feel).
   // Astro's <ClientRouter /> is opt-in per layout; see BaseLayout.astro.
   vite: {

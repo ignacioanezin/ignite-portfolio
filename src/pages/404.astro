@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found" noindex>
+  <section
+    class="container-rail flex min-h-[70vh] flex-col justify-center py-32"
+  >
+    <p class="eyebrow mb-4">404</p>
+    <h1
+      class="font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
+    >
+      Off the marked route.
+    </h1>
+    <p class="mt-6 max-w-md text-lg leading-relaxed text-ink-dim">
+      This page doesn’t exist — or it’s moved. Let’s get you back on trail.
+    </p>
+    <div class="mt-9 flex flex-wrap items-center gap-4">
+      <a href="/" class="btn-ink">
+        Back home
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </a>
+      <a href="/work" class="btn-ghost">See the work</a>
+    </div>
+  </section>
+</BaseLayout>

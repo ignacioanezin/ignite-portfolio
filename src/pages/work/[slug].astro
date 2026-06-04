@@ -1,0 +1,236 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import YouTubeFacade from '@/components/YouTubeFacade.astro';
+import { CATEGORY_META } from '@/content.config';
+import { SITE } from '@/lib/site';
+
+// One static page per project. `id` is the filename slug (matches ProjectCard's
+// /work/{id} links).
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const category = CATEGORY_META[data.category];
+
+// Optional author's-note body (markdown under the frontmatter).
+const { Content } = await render(project);
+
+// The case-study spine, in brief order. Result is rendered only when present
+// (honesty rule: no invented outcomes).
+const sections = [
+  { key: 'challenge', label: 'The challenge', body: data.challenge },
+  { key: 'strategy', label: 'The strategy', body: data.strategy },
+  { key: 'production', label: 'The production', body: data.production },
+  ...(data.result
+    ? [{ key: 'result', label: 'The result', body: data.result }]
+    : []),
+];
+
+const meta = [
+  { label: 'Role', value: data.role },
+  { label: 'Year', value: String(data.year) },
+  { label: 'Location', value: data.location },
+  ...(data.client ? [{ label: 'Client', value: data.client }] : []),
+];
+
+// JSON-LD: a VideoObject helps the case study surface as rich media.
+const videoSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: data.title,
+  description: data.excerpt,
+  thumbnailUrl: new URL(data.thumbnail.src, SITE.url).href,
+  uploadDate: `${data.year}-01-01`,
+  embedUrl: `https://www.youtube-nocookie.com/embed/${data.youtubeId}`,
+  creator: { '@type': 'Person', name: SITE.name },
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.excerpt}
+  ogType="article"
+>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(videoSchema)}
+    slot="head"
+  />
+
+  <article>
+    <!-- Header — LIGHT. -->
+    <header class="container-rail pt-32 pb-10 md:pt-40 md:pb-14">
+      <a
+        href="/work"
+        class="group inline-flex items-center gap-2 text-sm font-medium text-ink-dim transition-colors hover:text-ink"
+        data-reveal
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" class="transition-transform group-hover:-translate-x-1">
+          <path d="M13 8H3M7 4L3 8l4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        All work
+      </a>
+
+      <p class="eyebrow mt-8 mb-4" data-reveal>{category.label}</p>
+      <h1
+        class="max-w-4xl font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
+        data-reveal
+      >
+        {data.title}
+      </h1>
+      <p class="mt-6 max-w-2xl text-xl leading-snug text-ink-dim" data-reveal>
+        {data.excerpt}
+      </p>
+    </header>
+
+    <!-- Video — facade keeps it off the critical path. -->
+    <div class="container-rail" data-reveal>
+      <YouTubeFacade
+        youtubeId={data.youtubeId}
+        title={data.title}
+        poster={data.thumbnail}
+      />
+    </div>
+
+    <!-- Meta rail. -->
+    <div class="container-rail mt-8 md:mt-10" data-reveal>
+      <dl
+        class="grid grid-cols-2 gap-x-6 gap-y-6 border-y border-line py-6 sm:grid-cols-4"
+      >
+        {
+          meta.map((m) => (
+            <div>
+              <dt class="text-xs uppercase tracking-wider text-ink-faint">
+                {m.label}
+              </dt>
+              <dd class="mt-1.5 text-sm font-medium text-ink">{m.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <!-- Case-study spine. -->
+    <div class="container-rail py-16 md:py-24">
+      <div class="grid gap-x-16 gap-y-12 lg:grid-cols-[1fr_1.4fr]">
+        <div class="lg:sticky lg:top-28 lg:self-start" data-reveal>
+          <h2 class="text-3xl font-medium tracking-tight md:text-4xl">
+            One shoot. A campaign's worth of assets.
+          </h2>
+        </div>
+
+        <div class="space-y-12">
+          {
+            sections.map((s) => (
+              <section data-reveal>
+                <h3 class="eyebrow mb-3">{s.label}</h3>
+                <p class="text-lg leading-relaxed text-ink-dim md:text-xl">
+                  {s.body}
+                </p>
+              </section>
+            ))
+          }
+
+          <!-- Deliverables = the content ecosystem. -->
+          <section data-reveal>
+            <h3 class="eyebrow mb-4">The content ecosystem</h3>
+            <ul class="space-y-3">
+              {
+                data.deliverables.map((d) => (
+                  <li class="flex gap-3 text-lg leading-relaxed text-ink-dim">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      aria-hidden="true"
+                      class="mt-1 shrink-0 text-ink"
+                    >
+                      <path d="M4 10.5l3.5 3.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span>{d}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+
+          {
+            data.tags && data.tags.length > 0 && (
+              <ul class="flex flex-wrap gap-2" data-reveal>
+                {data.tags.map((tag) => (
+                  <li class="rounded-full border border-line px-3 py-1 text-xs uppercase tracking-wider text-ink-faint">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+
+          {/* Author's note (markdown body), if any. */}
+          <div
+            class="prose-note border-t border-line pt-8 text-lg italic leading-relaxed text-ink-dim"
+            data-reveal
+          >
+            <Content />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional gallery. -->
+    {
+      data.gallery && data.gallery.length > 0 && (
+        <div class="container-rail pb-16 md:pb-24">
+          <div class="grid gap-4 sm:grid-cols-2">
+            {data.gallery.map((img, i) => (
+              <Image
+                src={img}
+                alt={`${data.title} — still ${i + 1}`}
+                widths={[480, 800, 1200]}
+                sizes="(min-width: 640px) 50vw, 100vw"
+                loading="lazy"
+                class="w-full rounded-lg"
+                data-reveal
+              />
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    <!-- CTA — DARK close. -->
+    <section class="bg-ink text-bone">
+      <div class="container-rail py-20 md:py-28">
+        <div class="mx-auto max-w-2xl text-center" data-reveal>
+          <h2 class="text-3xl font-medium tracking-tight md:text-5xl">
+            Have a project like this?
+          </h2>
+          <p class="mx-auto mt-5 max-w-lg text-lg text-bone-dim">
+            Tell me the race, the launch, or the athlete — and the outcome you
+            need from it.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <a href="/contact" class="btn-bone">
+              Start a conversation
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </a>
+            <a href="/work" class="btn-ghost-dark">See more work</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

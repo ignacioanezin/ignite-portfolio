@@ -1,15 +1,162 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-// Full page lands in a later build step. Stub keeps nav from 404-ing.
+import { SITE } from '@/lib/site';
+import portrait from '@/assets/hero/ignacio.png';
+
+// LIGHT lead → DARK "embedded" proof band → LIGHT kit → DARK CTA, so the page
+// keeps the home page's light/dark rhythm rather than reading as one slab.
+
+// Editable kit. Kept as capability categories, not a spec-sheet of model
+// numbers — accurate, and it won't go stale. Swap for exact bodies/lenses if
+// you want the gear-nerd credibility.
+const kit = [
+  {
+    title: 'Run-and-gun body',
+    body: 'A full-frame mirrorless setup light enough to carry at race pace — the camera goes where a vehicle and a long lens can’t.',
+  },
+  {
+    title: 'Body-mount + gimbal',
+    body: 'Chest and helmet rigs for first-person effort, a compact gimbal for the moving landscape. Stabilised without slowing anyone down.',
+  },
+  {
+    title: 'Fast primes',
+    body: 'A small set of fast primes for low light on early starts and high cols — shallow, cinematic, no zoom creep.',
+  },
+  {
+    title: 'Self-sufficient in the field',
+    body: 'Power, audio, and storage for multi-day shoots off-grid. If the athletes can reach it, so can the footage.',
+  },
+];
 ---
 
-<BaseLayout title="About">
-  <section class="container-rail flex min-h-[60vh] flex-col justify-center py-32">
-    <p class="eyebrow mb-4">About</p>
-    <h1 class="text-4xl font-semibold md:text-6xl">Coming together next.</h1>
-    <p class="mt-4 max-w-md text-ink-dim">
-      This page is being built. Back to the
-      <a href="/" class="link-underline text-ink">home page</a>.
-    </p>
+<BaseLayout
+  title="About"
+  description="Embedded athlete-filmmaker based in Córdoba, Argentina. I run the races I film — access an external crew can't replicate."
+>
+  <!-- Lead — differentiator in the first two sentences. -->
+  <section class="container-rail pt-32 pb-16 md:pt-40 md:pb-24">
+    <div class="grid items-center gap-12 lg:grid-cols-[1.3fr_1fr]">
+      <div data-reveal>
+        <p class="eyebrow mb-4">About</p>
+        <h1
+          class="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-6xl"
+        >
+          I run the races I film.
+        </h1>
+        <div class="mt-7 space-y-5 text-lg leading-relaxed text-ink-dim md:text-xl">
+          <p>
+            I’m {SITE.name} — an athlete-filmmaker based in {SITE.baseLocation},
+            shooting across {SITE.shootingRegion}. The difference between my work
+            and a hired crew is simple: I’m inside the effort, not watching it
+            from the side of the trail.
+          </p>
+          <p>
+            That means I get the frames that only exist at race pace — the doubt
+            at the col, the breathing on the climb, the moment a crew with a
+            tripod would already have missed. Premium production rigor, shot from
+            a place an outside team can’t reach.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="relative mx-auto w-full max-w-sm overflow-hidden rounded-xl bg-bone-raise ring-1 ring-line"
+        data-reveal
+      >
+        <Image
+          src={portrait}
+          alt={`${SITE.name}, athlete-filmmaker`}
+          widths={[400, 600, 800]}
+          sizes="(min-width: 1024px) 32vw, 80vw"
+          class="h-full w-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Embedded proof — DARK band. -->
+  <section class="bg-ink text-bone">
+    <div class="container-rail py-20 md:py-28">
+      <div class="max-w-3xl" data-reveal>
+        <p class="eyebrow mb-4 text-bone-faint">Why embedded</p>
+        <h2 class="text-3xl font-medium tracking-tight md:text-5xl">
+          The access is the whole product.
+        </h2>
+      </div>
+
+      <div class="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-3">
+        {
+          [
+            {
+              h: 'I move at their pace',
+              p: 'Years of trail and mountain running mean I keep up with the athletes instead of staging the shoot around a crew’s limits. The camera breathes where they breathe.',
+            },
+            {
+              h: 'I shoot the real window',
+              p: 'Being self-sufficient and fast lets me catch the genuine weather and light on the mountain — not a recreated version of it the next clear morning.',
+            },
+            {
+              h: 'I respect the effort',
+              p: 'A quiet, one-person presence doesn’t break the moment. The athletes forget the camera is there, and that’s where the honest film lives.',
+            },
+          ].map((item) => (
+            <div data-reveal class="border-t border-bone/15 pt-5">
+              <h3 class="text-xl font-medium text-bone">{item.h}</h3>
+              <p class="mt-3 text-bone-dim leading-relaxed">{item.p}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Kit — LIGHT. -->
+  <section class="container-rail py-20 md:py-28">
+    <div class="max-w-2xl" data-reveal>
+      <p class="eyebrow mb-3">The kit</p>
+      <h2 class="text-3xl font-medium tracking-tight md:text-4xl">
+        Built to disappear into the effort.
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-ink-dim">
+        Light, fast, and self-sufficient — the gear is chosen so it never
+        becomes the reason a shot didn’t happen.
+      </p>
+    </div>
+
+    <ul class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+      {
+        kit.map((k) => (
+          <li data-reveal class="border-t border-line pt-5">
+            <h3 class="text-xl font-medium">{k.title}</h3>
+            <p class="mt-2.5 leading-relaxed text-ink-dim">{k.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- CTA — DARK close. -->
+  <section class="bg-ink text-bone">
+    <div class="container-rail py-20 md:py-28">
+      <div class="mx-auto max-w-2xl text-center" data-reveal>
+        <h2 class="text-3xl font-medium tracking-tight md:text-5xl">
+          Let’s make something worth the climb.
+        </h2>
+        <p class="mx-auto mt-5 max-w-lg text-lg text-bone-dim">
+          If you’re a brand, a race, or an athlete with a story in the
+          mountains, I’d like to hear about it.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <a href="/contact" class="btn-bone">
+            Work with me
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+          <a href="/work" class="btn-ghost-dark">See the work</a>
+        </div>
+      </div>
+    </div>
   </section>
 </BaseLayout>

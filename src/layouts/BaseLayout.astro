@@ -69,6 +69,14 @@ const personSchema = {
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#e9e8e3" />
 
+    <!-- Journal feed autodiscovery. -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.name} — Journal`}
+      href="/rss.xml"
+    />
+
     <!-- Preload the single body/display font for first paint.
          (Add a Switzer preload here too once its woff2 is in /public/fonts.) -->
     <link
@@ -99,6 +107,9 @@ const personSchema = {
       type="application/ld+json"
       set:html={JSON.stringify(personSchema)}
     />
+
+    <!-- Per-page head injection (extra JSON-LD, preloads, etc.). -->
+    <slot name="head" />
 
     <!-- Native smooth page transitions ("slow camera move"). -->
     <ClientRouter />
