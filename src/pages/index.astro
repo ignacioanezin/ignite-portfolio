@@ -1,0 +1,23 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { heroIsReel } from '@/lib/site';
+import Hero from '@/components/home/Hero.astro';
+import MetricsStrip from '@/components/home/MetricsStrip.astro';
+import ClientsWall from '@/components/home/ClientsWall.astro';
+import FeaturedWork from '@/components/home/FeaturedWork.astro';
+import Process from '@/components/home/Process.astro';
+import CtaSection from '@/components/home/CtaSection.astro';
+
+// Reel-mode hero is dark → nav chrome flips to light text.
+---
+
+<BaseLayout darkChrome={heroIsReel}>
+  {/* Order matters (per brief):
+      hero → proof (metrics + clients) → featured work → process → CTA */}
+  <Hero />
+  <MetricsStrip />
+  <ClientsWall />
+  <FeaturedWork />
+  <Process />
+  <CtaSection />
+</BaseLayout>

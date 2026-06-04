@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from '@/components/ProjectCard.astro';
+
+const featured = (await getCollection('projects'))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 4);
+---
+
+<!-- DARK — continuous with the Proof zone above. Project imagery is the source
+     of contrast; the section reads as the cinematic centerpiece. -->
+<section aria-label="Selected work" class="bg-ink text-bone">
+  <div class="container-rail py-20 md:py-28">
+    <div class="mb-12 flex flex-wrap items-end justify-between gap-6" data-reveal>
+      <div>
+        <p class="eyebrow mb-3 text-bone-faint">Selected work</p>
+        <h2 class="max-w-2xl text-4xl font-medium tracking-tight md:text-5xl">
+          A few projects, told as transformations — not clips.
+        </h2>
+      </div>
+      <a
+        href="/work"
+        class="group inline-flex items-center gap-2 text-sm font-medium text-bone-dim transition-colors hover:text-bone"
+      >
+        All work
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          aria-hidden="true"
+          class="transition-transform group-hover:translate-x-1"
+        >
+          <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Uniform grid: 2 cols desktop / 1 mobile. Desktop shows 4 (a balanced
+         2×2); mobile shows 3 — the 4th is hidden so the single column doesn't
+         run long. All below the fold → lazy-loaded so the hero owns LCP. -->
+    <div class="grid gap-x-8 gap-y-14 md:grid-cols-2">
+      {
+        featured.map((project, i) => (
+          <ProjectCard
+            project={project}
+            onDark
+            class={i === 3 ? 'hidden md:block' : undefined}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>

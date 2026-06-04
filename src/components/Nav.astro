@@ -1,0 +1,83 @@
+---
+import { SITE, NAV_LINKS } from '@/lib/site';
+import MobileNav from '@/components/react/MobileNav.tsx';
+
+interface Props {
+  /** True when the nav sits over a dark surface (reel-mode hero). */
+  darkChrome?: boolean;
+}
+const { darkChrome = false } = Astro.props;
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+
+// Adaptive foreground: ink on the light brand, bone over a dark reel hero.
+const fg = darkChrome ? 'text-bone' : 'text-ink';
+---
+
+<header class="absolute inset-x-0 top-0 z-50" data-site-header>
+  <div class="container-rail flex items-center justify-between py-5 md:py-7">
+    <!-- Logo (left) -->
+    <a
+      href="/"
+      class:list={[
+        'text-base font-medium tracking-tight transition-opacity hover:opacity-70',
+        fg,
+      ]}
+      aria-label={`${SITE.name} — home`}
+    >
+      {SITE.name}
+    </a>
+
+    <!-- Right cluster: availability + connect + nav (desktop) -->
+    <div class="hidden items-center gap-7 md:flex">
+      {
+        SITE.availability && (
+          <span
+            class:list={[
+              'flex items-center gap-2 text-xs font-medium',
+              darkChrome ? 'text-signal-soft' : 'text-signal',
+            ]}
+          >
+            <span
+              class="relative flex h-1.5 w-1.5"
+              aria-hidden="true"
+            >
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60" />
+              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
+            </span>
+            {SITE.availability}
+          </span>
+        )
+      }
+
+      <nav aria-label="Primary">
+        <ul class="flex items-center gap-7">
+          {
+            NAV_LINKS.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                  class:list={[
+                    'link-underline text-sm font-medium tracking-wide transition-opacity',
+                    fg,
+                    isActive(link.href) ? 'opacity-100' : 'opacity-70 hover:opacity-100',
+                  ]}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Mobile nav (React island) -->
+    <div class:list={['md:hidden', fg]}>
+      <MobileNav links={NAV_LINKS} currentPath={path} client:idle />
+    </div>
+  </div>
+</header>

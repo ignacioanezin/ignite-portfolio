@@ -1,0 +1,281 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Type — ONE neutral grotesque across the whole site (weight/size only).
+ *
+ * Primary: Switzer (Fontshare, free). It is NOT on npm, so it isn't bundled
+ * here. To use it: drop `switzer-variable.woff2` into /public/fonts and
+ * uncomment the @font-face below + the preload in BaseLayout.astro. Until
+ * then the stack falls through to Geist (self-hosted), exactly as briefed.
+ * ------------------------------------------------------------------ */
+
+/* PRIMARY — uncomment once the Switzer woff2 is in /public/fonts.
+@font-face {
+  font-family: 'Switzer';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/switzer-variable.woff2') format('woff2');
+}
+*/
+
+/* FALLBACK — Geist (self-hosted variable). */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/geist-variable.woff2') format('woff2');
+}
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (Tailwind v4 lives in CSS via @theme).
+ * Neutral light-editorial monochrome — no accent colour anywhere.
+ * Interactive emphasis = ink fills, underlines, and weight.
+ * ------------------------------------------------------------------ */
+@theme {
+  /* Palette. `ink` = darkest (text + fills), `bone` = lightest (page). */
+  --color-bone: #e9e8e3; /* page background */
+  --color-bone-raise: #f1f0eb; /* subtle raised surface */
+  --color-line: #d6d4cd; /* hairline borders */
+  --color-ink: #111110; /* primary text + ink-black fills */
+  --color-ink-dim: #57574f; /* secondary text on bone (AA) */
+  /* Tertiary / meta on bone. The brief's #6B6B63 measures 4.37:1 — just under
+     WCAG AA (4.5) at small sizes — so it's nudged one step darker to pass. */
+  --color-ink-faint: #61615a;
+
+  /* Secondary text ON DARK (ink) sections — light, AA on ink. */
+  --color-bone-dim: #a3a29b; /* secondary text on dark */
+  --color-bone-faint: #8f8e85; /* tertiary / meta on dark */
+
+  /* Lone accent: a muted sage for the "available" signal only. Desaturated so
+     it reads as a quiet status cue, not a brand colour. */
+  --color-signal: #5f7d5a; /* on bone */
+  --color-signal-soft: #93b389; /* on ink / dark chrome */
+
+  /* One family everywhere. Switzer first, then Geist, then system. */
+  --font-sans: 'Switzer', 'Geist', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif;
+  /* Kept as an alias so existing `font-display` utilities resolve to the same
+     family — there is no second display face. */
+  --font-display: 'Switzer', 'Geist', ui-sans-serif, system-ui, sans-serif;
+
+  /* Cinematic display scale (clamped, fluid). */
+  --text-display: clamp(3rem, 10vw, 9rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.04em;
+
+  --text-hero: clamp(2.25rem, 5.5vw, 5rem);
+  --text-hero--line-height: 1;
+  --text-hero--letter-spacing: -0.03em;
+
+  /* Generous content width + section rhythm. */
+  --spacing-gutter: clamp(1.25rem, 5vw, 6rem);
+
+  /* Easing that feels like a slow camera move, not a UI spring. */
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base layer.
+ * ------------------------------------------------------------------ */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bone);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings: clean Helvetica-display feel — tight tracking, light/regular. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  /* Visible, on-brand focus state (ink, no accent). */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-bone);
+  }
+
+  img,
+  video,
+  iframe {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Utilities / components.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .container-rail {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  /* Primary CTA — ink-black fill (the emphasis device, no accent). */
+  .btn-ink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-ink);
+    color: var(--color-bone);
+    font-weight: 500;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    transition: opacity 0.3s var(--ease-cinematic),
+      transform 0.3s var(--ease-cinematic);
+  }
+  .btn-ink:hover {
+    opacity: 0.85;
+  }
+
+  /* Secondary — outline that fills with ink on hover. */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-ink);
+    color: var(--color-ink);
+    font-weight: 500;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    transition: background-color 0.3s var(--ease-cinematic),
+      color 0.3s var(--ease-cinematic);
+  }
+  .btn-ghost:hover {
+    background: var(--color-ink);
+    color: var(--color-bone);
+  }
+
+  /* Inverse primary — for CTAs on DARK sections (bone fill, ink text). */
+  .btn-bone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-bone);
+    color: var(--color-ink);
+    font-weight: 500;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    transition: opacity 0.3s var(--ease-cinematic);
+  }
+  .btn-bone:hover {
+    opacity: 0.85;
+  }
+
+  /* Secondary on DARK — bone outline that fills with bone on hover. */
+  .btn-ghost-dark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-bone) 45%, transparent);
+    color: var(--color-bone);
+    font-weight: 500;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    transition: background-color 0.3s var(--ease-cinematic),
+      color 0.3s var(--ease-cinematic), border-color 0.3s var(--ease-cinematic);
+  }
+  .btn-ghost-dark:hover {
+    background: var(--color-bone);
+    border-color: var(--color-bone);
+    color: var(--color-ink);
+  }
+
+  /* Animated underline link (emphasis via underline, not colour). */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-cinematic);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Film-grain texture — very low opacity, fixed, non-interactive.
+ * ------------------------------------------------------------------ */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ *
+ * Scroll-reveal — subtle fade/slide, like a slow push-in.
+ * ------------------------------------------------------------------ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.8s var(--ease-cinematic),
+    transform 0.8s var(--ease-cinematic);
+  will-change: opacity, transform;
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}

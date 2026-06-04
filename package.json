@@ -1,0 +1,30 @@
+{
+  "name": "ignacio-anezin-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Portfolio site for Ignacio Anezin — embedded athlete-filmmaker.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "gen:placeholders": "node scripts/gen-placeholders.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.2.0",
+    "@astrojs/vercel": "^8.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "astro": "^5.2.0",
+    "geist": "^1.7.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "sharp": "^0.33.0",
+    "typescript": "^5.7.0"
+  }
+}

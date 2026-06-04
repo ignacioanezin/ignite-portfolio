@@ -1,0 +1,100 @@
+---
+import { Image } from 'astro:assets';
+import { SITE, VIMEO_REEL_ID } from '@/lib/site';
+import ReelStage from '@/components/react/ReelStage.tsx';
+import heroPoster from '@/assets/hero-poster.jpg';
+import portrait from '@/assets/hero/ignacio.png';
+
+// Reel mode: full-bleed muted autoplay loop + overlaid statement + unmute /
+// Play-reel controls. The portrait relocates into the INTRO BAND below.
+// (Active only when VIMEO_REEL_ID is set — see heroIsReel.)
+---
+
+<section
+  class="relative flex min-h-[100svh] items-end overflow-hidden bg-ink"
+  aria-label="Showreel"
+>
+  <!-- Poster fallback: first paint, reduced-data, reduced-motion. -->
+  <Image
+    src={heroPoster}
+    alt="Ignacio Anezin showreel"
+    widths={[768, 1280, 1920, 2400]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="absolute inset-0 h-full w-full object-cover"
+  />
+
+  <!-- The looping reel + controls (React island). Hidden motion under reduce. -->
+  <div class="reel-stage">
+    <ReelStage vimeoId={VIMEO_REEL_ID} client:load />
+  </div>
+
+  <!-- Cinematic grade for legibility. -->
+  <div
+    class="absolute inset-0 z-10 bg-gradient-to-t from-ink via-ink/40 to-ink/30"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- Statement overlay. -->
+  <div class="container-rail relative z-10 pb-24 pt-36 md:pb-28">
+    <p class="eyebrow mb-5 text-bone/70" data-reveal>
+      {SITE.baseLocation} · {SITE.shootingRegion}
+    </p>
+    <h1
+      class="max-w-4xl font-display font-medium text-bone"
+      style="font-size: var(--text-hero); line-height: var(--text-hero--line-height); letter-spacing: var(--text-hero--letter-spacing);"
+      data-reveal
+    >
+      {SITE.heroStatement}
+    </h1>
+  </div>
+</section>
+
+<!-- INTRO BAND — where the portrait lives in reel mode. -->
+<section aria-label="Introduction" class="border-b border-line">
+  <div class="container-rail py-16 md:py-24">
+    <div class="grid items-end gap-10 md:grid-cols-[0.8fr_1.2fr]">
+      <div class="relative mx-auto h-72 w-56 md:mx-0 md:h-96 md:w-72" data-reveal>
+        <Image
+          src={portrait}
+          alt={`${SITE.name}, athlete-filmmaker`}
+          widths={[300, 560]}
+          sizes="(min-width: 768px) 18rem, 14rem"
+          loading="lazy"
+          class="h-full w-full object-contain object-bottom"
+        />
+      </div>
+
+      <div data-reveal>
+        <p class="eyebrow mb-4">{SITE.tagline} · {SITE.baseLocation}</p>
+        <h2 class="font-display text-3xl font-medium tracking-tight md:text-4xl">
+          {SITE.name}
+        </h2>
+        <p class="mt-4 max-w-xl text-lg leading-relaxed text-ink-dim">
+          {SITE.heroStatement} I make athletes and landscapes look mythic — and
+          turn one production into a season of brand assets.
+        </p>
+        <a
+          href="/about"
+          class="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium text-ink"
+        >
+          Read the full story
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Respect reduced motion: drop the looping video, keep the poster + controls. */
+  @media (prefers-reduced-motion: reduce) {
+    .reel-stage :global(iframe) {
+      display: none;
+    }
+  }
+</style>

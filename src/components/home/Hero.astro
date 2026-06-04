@@ -1,0 +1,10 @@
+---
+import { heroIsReel } from '@/lib/site';
+import HeroPortrait from '@/components/home/HeroPortrait.astro';
+import HeroReel from '@/components/home/HeroReel.astro';
+
+// HERO_MODE drives which hero renders and where the portrait lives. 'reel' only
+// activates when VIMEO_REEL_ID is set (see heroIsReel); otherwise 'portrait'.
+---
+
+{heroIsReel ? <HeroReel /> : <HeroPortrait />}

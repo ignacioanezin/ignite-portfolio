@@ -1,0 +1,156 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { SITE } from '@/lib/site';
+import Nav from '@/components/Nav.astro';
+import Footer from '@/components/Footer.astro';
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or root-relative path to a 1200×630 share image. */
+  image?: string;
+  /** Set true on pages that should not be indexed. */
+  noindex?: boolean;
+  /** Override for OG type, e.g. 'article' on case studies. */
+  ogType?: string;
+  /** True when the nav overlays a dark surface (reel-mode hero). */
+  darkChrome?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = SITE.ogImage,
+  noindex = false,
+  ogType = 'website',
+  darkChrome = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const ogImageUrl = new URL(image, SITE.url).href;
+
+// JSON-LD Person schema — helps search engines understand who this is.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  jobTitle: 'Filmmaker',
+  description: SITE.description,
+  url: SITE.url,
+  email: `mailto:${SITE.email}`,
+  sameAs: [SITE.social.instagram],
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Córdoba',
+    addressCountry: 'AR',
+  },
+  knowsAbout: [
+    'Filmmaking',
+    'Trail running',
+    'Outdoor brand content',
+    'Sports cinematography',
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en" class="bg-bone">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#e9e8e3" />
+
+    <!-- Preload the single body/display font for first paint.
+         (Add a Switzer preload here too once its woff2 is in /public/fonts.) -->
+    <link
+      rel="preload"
+      href="/fonts/geist-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(personSchema)}
+    />
+
+    <!-- Native smooth page transitions ("slow camera move"). -->
+    <ClientRouter />
+  </head>
+
+  <body class="min-h-screen antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-bone"
+    >
+      Skip to content
+    </a>
+
+    <Nav darkChrome={darkChrome} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <!-- Tasteful static film-grain texture. -->
+    <div class="grain-overlay" aria-hidden="true"></div>
+
+    <!-- Scroll-reveal: respects reduced motion, re-runs after transitions. -->
+    <script>
+      function initReveal() {
+        const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
+        if (!items.length) return;
+        const reduce = window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches;
+        if (reduce || !('IntersectionObserver' in window)) {
+          items.forEach((el) => el.classList.add('is-visible'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                obs.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 }
+        );
+        items.forEach((el) => io.observe(el));
+      }
+      initReveal();
+      // Re-init after each client-side navigation.
+      document.addEventListener('astro:page-load', initReveal);
+    </script>
+  </body>
+</html>

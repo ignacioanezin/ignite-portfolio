@@ -1,0 +1,29 @@
+---
+import { METRICS, hasMetrics } from '@/data/metrics';
+// Renders nothing unless there are real metrics — never invented / zero values.
+---
+
+{
+  hasMetrics && (
+    <section aria-label="Proof in numbers" class="bg-ink text-bone">
+      <div class="container-rail py-12 md:py-16">
+        <dl
+          class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4"
+          data-reveal
+        >
+          {METRICS.map((m) => (
+            <div class="text-center md:text-left">
+              <dt class="sr-only">{m.label}</dt>
+              <dd>
+                <span class="block font-display text-4xl font-medium tracking-tight text-bone md:text-5xl">
+                  {m.value}
+                </span>
+                <span class="mt-1 block text-sm text-bone-dim">{m.label}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,79 @@
+---
+import { Image } from 'astro:assets';
+import { SITE } from '@/lib/site';
+import portrait from '@/assets/hero/ignacio.png';
+
+// Portrait mode (LIGHT). Desktop: name bottom-left, portrait bleeding off the
+// bottom-right at full contrast. Mobile: name + statement + CTAs on TOP,
+// portrait CENTERED at the bottom, bleeding below the viewport.
+const [first, last] = SITE.name.split(' ');
+---
+
+<section
+  class="relative min-h-[100svh] overflow-hidden"
+  aria-label="Introduction"
+>
+  <!-- Portrait. Full contrast, no opacity/blend/grayscale filters — clean B&W.
+       Mobile: centered, bottom, bleeding below. Desktop: bottom-right. -->
+  <div
+  class="pointer-events-none absolute bottom-0 left-1/2 z-0
+         h-[44vh] w-[100%] max-w-none
+         -translate-x-1/2
+         sm:h-[50vh]
+         md:bottom-0 md:left-auto md:right-[6%]
+         md:h-[78vh] md:w-1/2
+         md:translate-x-0
+         lg:right-[8%] lg:max-w-2xl"
+>
+    <Image
+  src={portrait}
+  alt={`${SITE.name}, athlete-filmmaker`}
+  widths={[480, 768, 1100]}
+  sizes="(min-width: 768px) 50vw, 100vw"
+  loading="eager"
+  fetchpriority="high"
+  class="h-full w-auto max-w-none object-contain object-bottom"
+/>
+  </div>
+
+  <!-- Desktop-only legibility wash on the text side; fully clear before the
+       portrait so it keeps full presence. -->
+  <div
+    class="pointer-events-none absolute inset-0 z-[1] hidden bg-gradient-to-r from-bone from-25% to-transparent to-55% md:block"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- Content: top on mobile (pt), bottom-left on desktop (mt-auto). -->
+  <div
+    class="container-rail relative z-10 flex min-h-[100svh] flex-col pt-32 pb-10 md:justify-center md:pt-0 md:pb-24"
+  >
+    <div>
+      <h1
+        class="font-display font-medium text-ink"
+        style="font-size: var(--text-display); line-height: var(--text-display--line-height); letter-spacing: var(--text-display--letter-spacing);"
+        data-reveal
+      >
+        <span class="block">{first}</span>
+        <span class="block">{last}</span>
+      </h1>
+
+      <p
+        class="mt-7 max-w-xl text-balance text-xl leading-snug text-ink-dim md:text-2xl"
+        data-reveal
+      >
+        {SITE.heroStatement}
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-4" data-reveal>
+        <a href="/work" class="btn-ink">
+          View the work
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+        <a href="/contact" class="btn-ghost">Work with me</a>
+      </div>
+    </div>
+  </div>
+</section>
