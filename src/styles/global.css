@@ -279,3 +279,45 @@
     transform: none;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * i18n — client-side language layer.
+ * Every <T> renders both languages; we show only the active one based on
+ * html[data-lang], set before paint by BaseLayout's resolver script. The
+ * wrapper is display:contents so translation never affects layout/spacing.
+ * Default (no/unknown data-lang) → English.
+ * ------------------------------------------------------------------ */
+.t {
+  display: contents;
+}
+html[data-lang='es'] [data-lang='en'] {
+  display: none;
+}
+html:not([data-lang='es']) [data-lang='es'] {
+  display: none;
+}
+
+/* Subtle EN / ES override. Inherits colour from nav chrome; active = full
+   opacity, inactive = dimmed. No flags, premium and quiet. */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.lang-toggle button {
+  color: inherit;
+  opacity: 0.5;
+  transition: opacity 0.3s var(--ease-cinematic);
+}
+.lang-toggle button:hover {
+  opacity: 0.85;
+}
+.lang-toggle button[aria-pressed='true'] {
+  opacity: 1;
+}
+.lang-toggle .sep {
+  opacity: 0.3;
+}

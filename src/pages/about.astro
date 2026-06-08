@@ -1,15 +1,129 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-// Full page lands in a later build step. Stub keeps nav from 404-ing.
+import { SITE } from '@/lib/site';
+import { ui } from '@/i18n/ui';
+import T from '@/components/T.astro';
+import portrait from '@/assets/hero/ignacio.png';
+
+// LIGHT lead → DARK "embedded" proof band → LIGHT kit → DARK CTA, so the page
+// keeps the home page's light/dark rhythm rather than reading as one slab.
+
+// The "why embedded" and kit copy lives in the i18n dictionary; map keys here.
+const why = ['about.why1', 'about.why2', 'about.why3'];
+const kit = ['about.kit1', 'about.kit2', 'about.kit3', 'about.kit4'];
+
+// Interpolated lead paragraphs (name/location/region) — built in both languages.
+const p1En = `I’m ${SITE.name} — an athlete-filmmaker based in ${SITE.baseLocation}, shooting across ${SITE.shootingRegion}. The difference between my work and a hired crew is simple: I’m inside the effort, not watching it from the side of the trail.`;
+const p1Es = `Soy ${SITE.name} — atleta y cineasta con base en ${SITE.baseLocation}, filmando por ${SITE.shootingRegion}. La diferencia entre mi trabajo y un equipo contratado es simple: estoy adentro del esfuerzo, no mirándolo desde el costado del sendero.`;
+const p2En = `That means I get the frames that only exist at race pace — the doubt at the col, the breathing on the climb, the moment a crew with a tripod would already have missed. Premium production rigor, shot from a place an outside team can’t reach.`;
+const p2Es = `Eso significa que consigo los planos que solo existen a ritmo de carrera — la duda en el col, la respiración en la subida, el momento que un equipo con trípode ya habría perdido. Rigor de producción premium, filmado desde un lugar al que un equipo externo no llega.`;
 ---
 
-<BaseLayout title="About">
-  <section class="container-rail flex min-h-[60vh] flex-col justify-center py-32">
-    <p class="eyebrow mb-4">About</p>
-    <h1 class="text-4xl font-semibold md:text-6xl">Coming together next.</h1>
-    <p class="mt-4 max-w-md text-ink-dim">
-      This page is being built. Back to the
-      <a href="/" class="link-underline text-ink">home page</a>.
-    </p>
+<BaseLayout
+  title="About"
+  titleEs="Sobre mí"
+  description={ui.en['about.meta_desc']}
+  descriptionEs={ui.es['about.meta_desc']}
+>
+  <!-- Lead — differentiator in the first two sentences. -->
+  <section class="container-rail pt-32 pb-16 md:pt-40 md:pb-24">
+    <div class="grid items-center gap-12 lg:grid-cols-[1.3fr_1fr]">
+      <div data-reveal>
+        <p class="eyebrow mb-4"><T k="about.eyebrow" /></p>
+        <h1
+          class="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-6xl"
+        >
+          <T k="about.h1" />
+        </h1>
+        <div class="mt-7 space-y-5 text-lg leading-relaxed text-ink-dim md:text-xl">
+          <p><T en={p1En} es={p1Es} /></p>
+          <p><T en={p2En} es={p2Es} /></p>
+        </div>
+      </div>
+
+      <div
+        class="relative mx-auto w-full max-w-sm overflow-hidden rounded-xl bg-bone-raise ring-1 ring-line"
+        data-reveal
+      >
+        <Image
+          src={portrait}
+          alt={`${SITE.name}, athlete-filmmaker`}
+          widths={[400, 600, 800]}
+          sizes="(min-width: 1024px) 32vw, 80vw"
+          class="h-full w-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Embedded proof — DARK band. -->
+  <section class="bg-ink text-bone">
+    <div class="container-rail py-20 md:py-28">
+      <div class="max-w-3xl" data-reveal>
+        <p class="eyebrow mb-4 text-bone-faint"><T k="about.why_eyebrow" /></p>
+        <h2 class="text-3xl font-medium tracking-tight md:text-5xl">
+          <T k="about.why_h2" />
+        </h2>
+      </div>
+
+      <div class="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-3">
+        {
+          why.map((k) => (
+            <div data-reveal class="border-t border-bone/15 pt-5">
+              <h3 class="text-xl font-medium text-bone"><T k={`${k}.h`} /></h3>
+              <p class="mt-3 text-bone-dim leading-relaxed"><T k={`${k}.p`} /></p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Kit — LIGHT. -->
+  <section class="container-rail py-20 md:py-28">
+    <div class="max-w-2xl" data-reveal>
+      <p class="eyebrow mb-3"><T k="about.kit_eyebrow" /></p>
+      <h2 class="text-3xl font-medium tracking-tight md:text-4xl">
+        <T k="about.kit_h2" />
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-ink-dim">
+        <T k="about.kit_intro" />
+      </p>
+    </div>
+
+    <ul class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+      {
+        kit.map((k) => (
+          <li data-reveal class="border-t border-line pt-5">
+            <h3 class="text-xl font-medium"><T k={`${k}.h`} /></h3>
+            <p class="mt-2.5 leading-relaxed text-ink-dim"><T k={`${k}.p`} /></p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- CTA — DARK close. -->
+  <section class="bg-ink text-bone">
+    <div class="container-rail py-20 md:py-28">
+      <div class="mx-auto max-w-2xl text-center" data-reveal>
+        <h2 class="text-3xl font-medium tracking-tight md:text-5xl">
+          <T k="about.cta_h2" />
+        </h2>
+        <p class="mx-auto mt-5 max-w-lg text-lg text-bone-dim">
+          <T k="about.cta_body" />
+        </p>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <a href="/contact" class="btn-bone">
+            <T k="about.cta_work" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+          <a href="/work" class="btn-ghost-dark"><T k="about.cta_see" /></a>
+        </div>
+      </div>
+    </div>
   </section>
 </BaseLayout>

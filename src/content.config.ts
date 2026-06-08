@@ -31,13 +31,49 @@ const projects = defineCollection({
       deliverables: z.array(z.string()), // the asset ecosystem
       result: z.string().optional(), // outcome — only if real/true
 
+      // Optional Spanish translations (EN fallback when absent). `excerpt_es`
+      // powers the bilingual listings; the long-form fields are the documented
+      // extension point for full case-study translation.
+      excerpt_es: z.string().optional(),
+      challenge_es: z.string().optional(),
+      strategy_es: z.string().optional(),
+      production_es: z.string().optional(),
+      result_es: z.string().optional(),
+      deliverables_es: z.array(z.string()).optional(),
+
       gallery: z.array(image()).optional(),
       featured: z.boolean().default(false),
       tags: z.array(z.string()).optional(),
     }),
 });
 
-export const collections = { projects };
+/**
+ * posts — the Journal / field-notes collection (SEO + voice). One markdown file
+ * per post in src/content/posts/. Body is freeform markdown; frontmatter drives
+ * the listing, meta tags, and RSS feed.
+ *
+ * Honesty: these read as craft/approach essays in the first-person voice, never
+ * outcome claims. Drafts (`draft: true`) are excluded from the build.
+ */
+const posts = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(), // one line for the card + <meta description>
+      // Optional Spanish title/description (EN fallback when absent). The post
+      // body stays English this pass.
+      title_es: z.string().optional(),
+      description_es: z.string().optional(),
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      heroImage: image().optional(),
+      tags: z.array(z.string()).default([]),
+      draft: z.boolean().default(false),
+    }),
+});
+
+export const collections = { projects, posts };
 
 /** Display metadata for each category — single source for labels/filters. */
 export const CATEGORY_META = {

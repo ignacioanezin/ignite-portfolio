@@ -72,10 +72,10 @@ export const heroIsReel =
  */
 export const CLIENTS_DISPLAY: 'wall' | 'slider' = 'wall';
 
-/** Four-item nav — order matters. */
+/** Four-item nav — order matters. `key` resolves the label via the i18n dict. */
 export const NAV_LINKS = [
-  { label: 'Work', href: '/work' },
-  { label: 'About', href: '/about' },
-  { label: 'Services', href: '/services' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Work', href: '/work', key: 'nav.work' },
+  { label: 'About', href: '/about', key: 'nav.about' },
+  { label: 'Services', href: '/services', key: 'nav.services' },
+  { label: 'Contact', href: '/contact', key: 'nav.contact' },
 ] as const;

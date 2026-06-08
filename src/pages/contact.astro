@@ -1,15 +1,264 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-// Full page lands in a later build step. Stub keeps nav from 404-ing.
+import { SITE } from '@/lib/site';
+import { ui } from '@/i18n/ui';
+import T from '@/components/T.astro';
+
+// Static site → the form posts to a third-party form endpoint (Formspree-style
+// placeholder). Swap FORM_ENDPOINT for your real one (see README). The form
+// works without JavaScript; a tiny enhancement just shows an inline success
+// state when the endpoint returns JSON.
+const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
+
+// Interpolated "based in" line, both languages.
+const basedEn = `${SITE.baseLocation} · shooting across ${SITE.shootingRegion}`;
+const basedEs = `${SITE.baseLocation} · filmando por ${SITE.shootingRegion}`;
+
+// Status strings for the client script, both languages (picked at runtime by
+// the active html[data-lang]).
+const statusI18n = {
+  en: {
+    unconfigured: ui.en['contact.status_unconfigured'],
+    sending: ui.en['contact.status_sending'],
+    success: ui.en['contact.status_success'],
+    error: ui.en['contact.status_error'],
+  },
+  es: {
+    unconfigured: ui.es['contact.status_unconfigured'],
+    sending: ui.es['contact.status_sending'],
+    success: ui.es['contact.status_success'],
+    error: ui.es['contact.status_error'],
+  },
+};
 ---
 
-<BaseLayout title="Contact">
-  <section class="container-rail flex min-h-[60vh] flex-col justify-center py-32">
-    <p class="eyebrow mb-4">Contact</p>
-    <h1 class="text-4xl font-semibold md:text-6xl">Coming together next.</h1>
-    <p class="mt-4 max-w-md text-ink-dim">
-      This page is being built. Back to the
-      <a href="/" class="link-underline text-ink">home page</a>.
-    </p>
+<BaseLayout
+  title="Contact"
+  titleEs="Contacto"
+  description={ui.en['contact.meta_desc']}
+  descriptionEs={ui.es['contact.meta_desc']}
+>
+  <section class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+      <!-- Left: pitch + direct details. -->
+      <div data-reveal>
+        <p class="eyebrow mb-4"><T k="contact.eyebrow" /></p>
+        <h1
+          class="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-6xl"
+        >
+          <T k="contact.h1" />
+        </h1>
+        <p class="mt-6 max-w-md text-lg leading-relaxed text-ink-dim">
+          <T k="contact.intro" />
+        </p>
+
+        <dl class="mt-10 space-y-6">
+          <div>
+            <dt class="eyebrow mb-2"><T k="contact.email_label" /></dt>
+            <dd>
+              <a
+                href={`mailto:${SITE.email}`}
+                class="link-underline text-lg text-ink"
+              >
+                {SITE.email}
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt class="eyebrow mb-2"><T k="contact.ig_label" /></dt>
+            <dd>
+              <a
+                href={SITE.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-underline text-lg text-ink"
+              >
+                {SITE.social.instagramHandle}
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt class="eyebrow mb-2"><T k="contact.based_label" /></dt>
+            <dd class="text-lg text-ink-dim">
+              <T en={basedEn} es={basedEs} />
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Right: the form. -->
+      <div data-reveal>
+        <script
+          id="contact-i18n"
+          type="application/json"
+          is:inline
+          set:html={JSON.stringify(statusI18n)}
+        />
+        <form
+          id="contact-form"
+          action={FORM_ENDPOINT}
+          method="POST"
+          class="rounded-xl bg-bone-raise p-6 ring-1 ring-line md:p-8"
+        >
+          <!-- Honeypot: bots fill it, humans never see it. -->
+          <div class="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
+            <label>
+              Leave this field empty
+              <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="space-y-5">
+            <div>
+              <label for="name" class="mb-2 block text-sm font-medium text-ink">
+                <T k="contact.name" />
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                autocomplete="name"
+                class="form-field"
+              />
+            </div>
+
+            <div>
+              <label for="email" class="mb-2 block text-sm font-medium text-ink">
+                <T k="contact.email_label" />
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                class="form-field"
+              />
+            </div>
+
+            <div>
+              <label
+                for="message"
+                class="mb-2 block text-sm font-medium text-ink"
+              >
+                <T k="contact.message" />
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                required
+                class="form-field resize-y"
+              ></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-ink mt-6 w-full justify-center">
+            <T k="contact.send" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+
+          <p
+            id="form-status"
+            role="status"
+            aria-live="polite"
+            class="mt-4 text-sm text-ink-dim"
+          >
+          </p>
+
+          <p class="mt-4 text-xs leading-relaxed text-ink-faint">
+            <T
+              en="Prefer email? Write to "
+              es="¿Preferís email? Escribime directo a "
+            /><a href={`mailto:${SITE.email}`} class="link-underline text-ink-dim"
+              >{SITE.email}</a
+            ><T en=" directly." es="." />
+          </p>
+        </form>
+      </div>
+    </div>
   </section>
 </BaseLayout>
+
+<style>
+  .form-field {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-bone);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    transition: border-color 0.3s var(--ease-cinematic);
+  }
+  .form-field::placeholder {
+    color: var(--color-ink-faint);
+  }
+  .form-field:focus {
+    outline: none;
+    border-color: var(--color-ink);
+  }
+</style>
+
+<script>
+  // Progressive enhancement: keep the visitor on-page on success. Without JS the
+  // form still posts normally to the endpoint. Status strings are localised from
+  // the embedded #contact-i18n payload using the active language.
+  function initContactForm() {
+    const form = document.getElementById(
+      'contact-form'
+    ) as HTMLFormElement | null;
+    const status = document.getElementById('form-status');
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = 'true';
+
+    const t = (key: 'unconfigured' | 'sending' | 'success' | 'error') => {
+      const lang =
+        document.documentElement.getAttribute('data-lang') === 'es'
+          ? 'es'
+          : 'en';
+      try {
+        const data = JSON.parse(
+          document.getElementById('contact-i18n')?.textContent || '{}'
+        );
+        return data[lang]?.[key] ?? data.en?.[key] ?? '';
+      } catch {
+        return '';
+      }
+    };
+
+    form.addEventListener('submit', async (e) => {
+      if (form.action.includes('your-form-id')) {
+        e.preventDefault();
+        if (status) {
+          status.textContent = t('unconfigured');
+          status.style.color = 'var(--color-ink)';
+        }
+        return;
+      }
+
+      e.preventDefault();
+      if (status) status.textContent = t('sending');
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          form.reset();
+          if (status) status.textContent = t('success');
+        } else {
+          throw new Error('Bad response');
+        }
+      } catch {
+        if (status) status.textContent = t('error');
+      }
+    });
+  }
+  initContactForm();
+  document.addEventListener('astro:page-load', initContactForm);
+</script>

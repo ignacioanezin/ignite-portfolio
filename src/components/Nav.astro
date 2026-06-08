@@ -1,5 +1,8 @@
 ---
 import { SITE, NAV_LINKS } from '@/lib/site';
+import { ui } from '@/i18n/ui';
+import T from '@/components/T.astro';
+import LangToggle from '@/components/LangToggle.astro';
 import MobileNav from '@/components/react/MobileNav.tsx';
 
 interface Props {
@@ -14,11 +17,24 @@ const isActive = (href: string) =>
 
 // Adaptive foreground: ink on the light brand, bone over a dark reel hero.
 const fg = darkChrome ? 'text-bone' : 'text-ink';
+
+// Bilingual labels for the React mobile menu (rendered as dual spans there).
+const navLinks = NAV_LINKS.map((l) => ({
+  href: l.href,
+  en: ui.en[l.key] ?? l.label,
+  es: ui.es[l.key] ?? l.label,
+}));
+const menuLabels = {
+  openEn: ui.en['nav.menu_open'],
+  openEs: ui.es['nav.menu_open'],
+  closeEn: ui.en['nav.menu_close'],
+  closeEs: ui.es['nav.menu_close'],
+};
 ---
 
 <header class="absolute inset-x-0 top-0 z-50" data-site-header>
   <div class="container-rail flex items-center justify-between py-5 md:py-7">
-    <!-- Logo (left) -->
+    <!-- Logo (left) — proper noun, never translated. -->
     <a
       href="/"
       class:list={[
@@ -30,7 +46,7 @@ const fg = darkChrome ? 'text-bone' : 'text-ink';
       {SITE.name}
     </a>
 
-    <!-- Right cluster: availability + connect + nav (desktop) -->
+    <!-- Right cluster: availability + nav + language (desktop) -->
     <div class="hidden items-center gap-7 md:flex">
       {
         SITE.availability && (
@@ -40,14 +56,11 @@ const fg = darkChrome ? 'text-bone' : 'text-ink';
               darkChrome ? 'text-signal-soft' : 'text-signal',
             ]}
           >
-            <span
-              class="relative flex h-1.5 w-1.5"
-              aria-hidden="true"
-            >
+            <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60" />
               <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
             </span>
-            {SITE.availability}
+            <T k="nav.availability" />
           </span>
         )
       }
@@ -66,18 +79,26 @@ const fg = darkChrome ? 'text-bone' : 'text-ink';
                     isActive(link.href) ? 'opacity-100' : 'opacity-70 hover:opacity-100',
                   ]}
                 >
-                  {link.label}
+                  <T k={link.key} />
                 </a>
               </li>
             ))
           }
         </ul>
       </nav>
+
+      <LangToggle darkChrome={darkChrome} />
     </div>
 
-    <!-- Mobile nav (React island) -->
-    <div class:list={['md:hidden', fg]}>
-      <MobileNav links={NAV_LINKS} currentPath={path} client:idle />
+    <!-- Mobile: language toggle + hamburger -->
+    <div class:list={['flex items-center gap-4 md:hidden', fg]}>
+      <LangToggle darkChrome={darkChrome} />
+      <MobileNav
+        links={navLinks}
+        menuLabels={menuLabels}
+        currentPath={path}
+        client:idle
+      />
     </div>
   </div>
 </header>

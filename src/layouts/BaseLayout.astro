@@ -1,13 +1,18 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import { SITE } from '@/lib/site';
+import { ui } from '@/i18n/ui';
 import Nav from '@/components/Nav.astro';
 import Footer from '@/components/Footer.astro';
 import '@/styles/global.css';
 
 interface Props {
   title?: string;
+  /** Spanish page title (defaults to `title`, or the translated tagline). */
+  titleEs?: string;
   description?: string;
+  /** Spanish meta description (defaults to the translated site description). */
+  descriptionEs?: string;
   /** Absolute or root-relative path to a 1200×630 share image. */
   image?: string;
   /** Set true on pages that should not be indexed. */
@@ -20,14 +25,33 @@ interface Props {
 
 const {
   title,
+  titleEs,
   description = SITE.description,
+  descriptionEs,
   image = SITE.ogImage,
   noindex = false,
   ogType = 'website',
   darkChrome = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
+const tEn = (k: string) => ui.en[k] ?? k;
+const tEs = (k: string) => ui.es[k] ?? ui.en[k] ?? k;
+
+// Bilingual title/description. EN renders into the tags; ES ships in a small
+// JSON island that the resolver/toggle apply on the client.
+const pageTitle = title
+  ? `${title} — ${SITE.name}`
+  : `${SITE.name} — ${tEn('site.tagline')}`;
+const pageTitleEs = (titleEs ?? title)
+  ? `${titleEs ?? title} — ${SITE.name}`
+  : `${SITE.name} — ${tEs('site.tagline')}`;
+const descEs = descriptionEs ?? tEs('site.description');
+
+const i18nMeta = {
+  en: { title: pageTitle, description },
+  es: { title: pageTitleEs, description: descEs },
+};
+
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 const ogImageUrl = new URL(image, SITE.url).href;
 
@@ -69,6 +93,22 @@ const personSchema = {
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#e9e8e3" />
 
+    <!-- Bilingual title/description payload for the language layer. -->
+    <script
+      id="i18n-meta"
+      type="application/json"
+      is:inline
+      set:html={JSON.stringify(i18nMeta)}
+    />
+
+    <!-- Blog feed autodiscovery. -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.name} — Blog`}
+      href="/rss.xml"
+    />
+
     <!-- Preload the single body/display font for first paint.
          (Add a Switzer preload here too once its woff2 is in /public/fonts.) -->
     <link
@@ -99,6 +139,60 @@ const personSchema = {
       type="application/ld+json"
       set:html={JSON.stringify(personSchema)}
     />
+
+    <!-- Per-page head injection (extra JSON-LD, preloads, etc.). -->
+    <slot name="head" />
+
+    <!--
+      Language resolver — runs in <head> before <body> paints, so the correct
+      language is shown with no flash. Priority: manual saved (localStorage) →
+      browser language → English. Also applies the Spanish title/description and
+      re-applies them after client-side navigations.
+    -->
+    <script is:inline>
+      (function () {
+        function applyMeta(lang) {
+          if (lang === 'en') return;
+          var el = document.getElementById('i18n-meta');
+          if (!el || !el.textContent) return;
+          try {
+            var m = JSON.parse(el.textContent)[lang];
+            if (!m) return;
+            if (m.title) document.title = m.title;
+            var d = document.querySelector('meta[name="description"]');
+            if (m.description && d) d.setAttribute('content', m.description);
+          } catch (e) {}
+        }
+        function resolve() {
+          var saved = null;
+          try {
+            saved = localStorage.getItem('lang');
+          } catch (e) {}
+          var nav = (
+            navigator.language ||
+            navigator.userLanguage ||
+            'en'
+          ).toLowerCase();
+          var lang =
+            saved === 'es' || saved === 'en'
+              ? saved
+              : nav.indexOf('es') === 0
+                ? 'es'
+                : 'en';
+          var de = document.documentElement;
+          de.setAttribute('data-lang', lang);
+          de.setAttribute('lang', lang);
+          return lang;
+        }
+        applyMeta(resolve());
+        // Re-assert after Astro view transitions: the swap resets <html>'s
+        // attributes to the incoming (English) page, so re-resolve before paint
+        // to keep the chosen language with no flash.
+        document.addEventListener('astro:after-swap', function () {
+          applyMeta(resolve());
+        });
+      })();
+    </script>
 
     <!-- Native smooth page transitions ("slow camera move"). -->
     <ClientRouter />

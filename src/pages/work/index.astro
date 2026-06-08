@@ -1,15 +1,81 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-// Full filterable grid lands in build step 5. Stub keeps nav from 404-ing.
+import ProjectCard from '@/components/ProjectCard.astro';
+import WorkFilter from '@/components/react/WorkFilter.tsx';
+import T from '@/components/T.astro';
+import { CATEGORY_META, type CategoryKey } from '@/content.config';
+import { ui } from '@/i18n/ui';
+
+// Full curated grid. Newest first; equal hierarchy (no hero card), per brief.
+const projects = (await getCollection('projects')).sort(
+  (a, b) => b.data.year - a.data.year
+);
+
+// Build category tabs with live counts — only categories that actually have
+// work appear (no empty filters). Order follows CATEGORY_META.
+const counts = projects.reduce<Record<string, number>>((acc, p) => {
+  acc[p.data.category] = (acc[p.data.category] ?? 0) + 1;
+  return acc;
+}, {});
+
+const categories = (Object.keys(CATEGORY_META) as CategoryKey[])
+  .filter((key) => counts[key])
+  .sort((a, b) => CATEGORY_META[a].order - CATEGORY_META[b].order)
+  .map((key) => ({
+    key,
+    en: ui.en[`cat.${key}`],
+    es: ui.es[`cat.${key}`],
+    count: counts[key],
+  }));
 ---
 
-<BaseLayout title="Work" description="Selected films for outdoor and trail-running brands, races, and athletes.">
-  <section class="container-rail flex min-h-[60vh] flex-col justify-center py-32">
-    <p class="eyebrow mb-4">Work</p>
-    <h1 class="text-4xl font-semibold md:text-6xl">Coming together next.</h1>
-    <p class="mt-4 max-w-md text-ink-dim">
-      The filterable case-study grid is being built. For now, the featured
-      projects live on the <a href="/" class="link-underline text-ink">home page</a>.
-    </p>
+<BaseLayout
+  title="Work"
+  titleEs="Trabajo"
+  description={ui.en['work.meta_desc']}
+  descriptionEs={ui.es['work.meta_desc']}
+>
+  <section class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
+    <!-- Header -->
+    <div class="max-w-3xl" data-reveal>
+      <p class="eyebrow mb-4"><T k="work.eyebrow" /></p>
+      <h1
+        class="font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
+      >
+        <T k="work.h1" />
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-ink-dim">
+        <T k="work.intro" />
+      </p>
+    </div>
+
+    <!-- Filter + grid -->
+    <div class="mt-12 md:mt-16" data-reveal>
+      <WorkFilter
+        categories={categories}
+        total={projects.length}
+        allEn={ui.en['filter.all']}
+        allEs={ui.es['filter.all']}
+        client:idle
+      />
+      <p
+        id="work-filter-status"
+        class="sr-only"
+        role="status"
+        aria-live="polite"
+      >
+      </p>
+    </div>
+
+    <ul class="mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 md:mt-14">
+      {
+        projects.map((project, i) => (
+          <li data-work-item data-category={project.data.category}>
+            <ProjectCard project={project} priority={i < 2} />
+          </li>
+        ))
+      }
+    </ul>
   </section>
 </BaseLayout>

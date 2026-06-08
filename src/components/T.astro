@@ -1,0 +1,46 @@
+---
+import { ui } from '@/i18n/ui';
+
+/**
+ * <T> — renders a translatable string in BOTH languages; the inactive one is
+ * hidden by CSS keyed on `html[data-lang]` (see global.css). The wrapper is
+ * `display:contents` so it never affects layout/spacing.
+ *
+ * Usage:
+ *   <T k="nav.work" />                         // dictionary key
+ *   <T en="Hi, Ana" es="Hola, Ana" />          // interpolated / one-off
+ *   <T k="cs.spine_h2" as="span" />            // (always inline spans)
+ *
+ * For attributes (alt/placeholder/title/meta) use the dictionary + JS instead —
+ * <T> only covers visible text nodes.
+ */
+interface Props {
+  k?: string;
+  en?: string;
+  es?: string;
+  /** Render with set:html (only when the string contains markup/entities). */
+  html?: boolean;
+  class?: string;
+}
+
+const { k, en, es, html = false, class: className } = Astro.props;
+
+const enText = en ?? (k ? (ui.en[k] ?? k) : '');
+const esText = es ?? (k ? (ui.es[k] ?? ui.en[k] ?? k) : enText);
+---
+
+<span class:list={['t', className]} data-k={k}>
+  {
+    html ? (
+      <>
+        <span lang="en" data-lang="en" set:html={enText} />
+        <span lang="es" data-lang="es" set:html={esText} />
+      </>
+    ) : (
+      <>
+        <span lang="en" data-lang="en">{enText}</span>
+        <span lang="es" data-lang="es">{esText}</span>
+      </>
+    )
+  }
+</span>

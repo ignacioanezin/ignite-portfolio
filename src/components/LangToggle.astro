@@ -1,0 +1,87 @@
+---
+/**
+ * LangToggle — subtle EN / ES override. No flags, no framework. Clicking sets
+ * the manual preference (localStorage), flips `html[data-lang]` live (CSS swaps
+ * all <T> strings with no reload/flash), and updates the document title/meta.
+ *
+ * The actual language *resolution* on load happens in BaseLayout's blocking
+ * head script (manual saved → browser → en); this only handles the manual
+ * override + active state.
+ */
+interface Props {
+  /** Bone tones over a dark reel hero; ink tones on the light brand. */
+  darkChrome?: boolean;
+}
+const { darkChrome = false } = Astro.props;
+const base = darkChrome ? 'text-bone' : 'text-ink';
+---
+
+<div
+  class:list={['lang-toggle', base]}
+  role="group"
+  aria-label="Language / Idioma"
+>
+  <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+  <span class="sep" aria-hidden="true">/</span>
+  <button type="button" data-set-lang="es" aria-pressed="false">ES</button>
+</div>
+
+<script>
+  function applyMeta(lang: string) {
+    const el = document.getElementById('i18n-meta');
+    if (!el?.textContent) return;
+    try {
+      const meta = JSON.parse(el.textContent) as Record<
+        string,
+        { title?: string; description?: string }
+      >;
+      const m = meta[lang];
+      if (!m) return;
+      if (m.title) document.title = m.title;
+      if (m.description) {
+        document
+          .querySelector('meta[name="description"]')
+          ?.setAttribute('content', m.description);
+      }
+    } catch {
+      /* no-op */
+    }
+  }
+
+  function syncToggles() {
+    const lang = document.documentElement.dataset.lang || 'en';
+    document
+      .querySelectorAll<HTMLButtonElement>('[data-set-lang]')
+      .forEach((btn) => {
+        btn.setAttribute(
+          'aria-pressed',
+          btn.dataset.setLang === lang ? 'true' : 'false'
+        );
+      });
+  }
+
+  function initLangToggle() {
+    document
+      .querySelectorAll<HTMLButtonElement>('[data-set-lang]')
+      .forEach((btn) => {
+        if (btn.dataset.bound) return;
+        btn.dataset.bound = 'true';
+        btn.addEventListener('click', () => {
+          const lang = btn.dataset.setLang || 'en';
+          try {
+            localStorage.setItem('lang', lang);
+          } catch {
+            /* private mode — fine, just no persistence */
+          }
+          document.documentElement.dataset.lang = lang;
+          document.documentElement.lang = lang;
+          applyMeta(lang);
+          syncToggles();
+        });
+      });
+    syncToggles();
+  }
+
+  initLangToggle();
+  document.addEventListener('astro:page-load', initLangToggle);
+</script>

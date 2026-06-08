@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ProjectCard from '@/components/ProjectCard.astro';
+import T from '@/components/T.astro';
 
 const featured = (await getCollection('projects'))
   .filter((p) => p.data.featured)
@@ -14,16 +15,16 @@ const featured = (await getCollection('projects'))
   <div class="container-rail py-20 md:py-28">
     <div class="mb-12 flex flex-wrap items-end justify-between gap-6" data-reveal>
       <div>
-        <p class="eyebrow mb-3 text-bone-faint">Selected work</p>
+        <p class="eyebrow mb-3 text-bone-faint"><T k="featured.eyebrow" /></p>
         <h2 class="max-w-2xl text-4xl font-medium tracking-tight md:text-5xl">
-          A few projects, told as transformations — not clips.
+          <T k="featured.h2" />
         </h2>
       </div>
       <a
         href="/work"
         class="group inline-flex items-center gap-2 text-sm font-medium text-bone-dim transition-colors hover:text-bone"
       >
-        All work
+        <T k="featured.all" />
         <svg
           width="16"
           height="16"

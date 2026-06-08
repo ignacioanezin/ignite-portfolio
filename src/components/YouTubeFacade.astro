@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  youtubeId: string;
+  title: string;
+  /** Local poster image (optimized) shown until the viewer clicks play. */
+  poster: ImageMetadata;
+}
+
+const { youtubeId, title, poster } = Astro.props;
+
+// Facade / lite-embed: ship only a poster + button. The heavy YouTube iframe is
+// injected on click (see inline script) so it never costs us LCP or a network
+// request on load. Privacy-friendly nocookie host; rel=0&modestbranding=1 per
+// brief. Implemented as a tiny vanilla enhancement (like ProjectCard's hover
+// script) rather than a React island — it's a one-shot DOM swap, not stateful
+// UI, and this keeps the <Image> poster fully optimized.
+---
+
+<div
+  class="yt-facade group relative aspect-video overflow-hidden rounded-lg bg-ink ring-1 ring-bone/10"
+  data-yt-id={youtubeId}
+>
+  <Image
+    src={poster}
+    alt={`${title} — video still`}
+    widths={[480, 800, 1280, 1600]}
+    sizes="(min-width: 768px) 80vw, 100vw"
+    loading="lazy"
+    class="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+  />
+
+  <!-- Subtle wash so the play control always has contrast. -->
+  <div
+    class="pointer-events-none absolute inset-0 bg-ink/20 transition-colors duration-500 group-hover:bg-ink/10"
+    aria-hidden="true"
+  >
+  </div>
+
+  <button
+    type="button"
+    class="yt-play absolute inset-0 flex items-center justify-center focus-visible:outline-none"
+    aria-label={`Play video: ${title}`}
+  >
+    <span
+      class="flex h-20 w-20 items-center justify-center rounded-full bg-bone/95 text-ink shadow-lg backdrop-blur-sm transition-transform duration-500 group-hover:scale-105"
+    >
+      <svg width="26" height="26" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M4 2.5v11l9-5.5z"></path>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script>
+  // Swap the poster for the real iframe on first click. Idempotent + re-bound
+  // after Astro view transitions.
+  function initYouTubeFacades() {
+    document
+      .querySelectorAll<HTMLElement>('.yt-facade')
+      .forEach((facade) => {
+        if (facade.dataset.bound) return;
+        facade.dataset.bound = 'true';
+        const button = facade.querySelector<HTMLButtonElement>('.yt-play');
+        const id = facade.dataset.ytId;
+        if (!button || !id) return;
+
+        button.addEventListener('click', () => {
+          const iframe = document.createElement('iframe');
+          iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+          iframe.title = button.getAttribute('aria-label') ?? 'Video player';
+          iframe.allow =
+            'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+          iframe.allowFullscreen = true;
+          iframe.className = 'absolute inset-0 h-full w-full';
+          iframe.setAttribute('loading', 'eager');
+          facade.replaceChildren(iframe);
+        });
+      });
+  }
+  initYouTubeFacades();
+  document.addEventListener('astro:page-load', initYouTubeFacades);
+</script>

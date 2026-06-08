@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { SITE } from '@/lib/site';
+import T from '@/components/T.astro';
 import portrait from '@/assets/hero/ignacio.png';
 
 // Portrait mode (LIGHT). Desktop: name bottom-left, portrait bleeding off the
@@ -62,17 +63,17 @@ const [first, last] = SITE.name.split(' ');
         class="mt-7 max-w-xl text-balance text-xl leading-snug text-ink-dim md:text-2xl"
         data-reveal
       >
-        {SITE.heroStatement}
+        <T k="site.statement" />
       </p>
 
       <div class="mt-9 flex flex-wrap items-center gap-4" data-reveal>
         <a href="/work" class="btn-ink">
-          View the work
+          <T k="hero.cta_work" />
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
-        <a href="/contact" class="btn-ghost">Work with me</a>
+        <a href="/contact" class="btn-ghost"><T k="hero.cta_contact" /></a>
       </div>
     </div>
   </div>

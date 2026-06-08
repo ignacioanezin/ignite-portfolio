@@ -1,24 +1,24 @@
 ---
 import { SITE } from '@/lib/site';
+import T from '@/components/T.astro';
 ---
 
 <!-- DARK — the page ends strong. -->
 <section aria-label="Work with me" class="bg-ink text-bone">
   <div class="container-rail py-24 md:py-36">
     <div class="mx-auto max-w-3xl text-center" data-reveal>
-      <p class="eyebrow mb-5 text-bone-faint">Work with me</p>
+      <p class="eyebrow mb-5 text-bone-faint"><T k="cta.eyebrow" /></p>
       <h2
         class="text-4xl font-medium leading-[1.04] tracking-tight md:text-6xl"
       >
-        Have a race, a launch, or an athlete worth a film?
+        <T k="cta.h2" />
       </h2>
       <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-bone-dim">
-        I take on a handful of projects a season so each one gets the legs — and
-        the lungs — it deserves. Tell me what you’re building.
+        <T k="cta.body" />
       </p>
       <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
         <a href="/contact" class="btn-bone">
-          Start a conversation
+          <T k="cta.start" />
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>

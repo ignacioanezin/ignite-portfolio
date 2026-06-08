@@ -1,12 +1,22 @@
 import { useEffect, useState } from 'react';
 
 interface NavLink {
-  label: string;
   href: string;
+  /** Bilingual labels — rendered as dual spans; CSS shows the active language. */
+  en: string;
+  es: string;
+}
+
+interface MenuLabels {
+  openEn: string;
+  openEs: string;
+  closeEn: string;
+  closeEs: string;
 }
 
 interface Props {
   links: readonly NavLink[];
+  menuLabels: MenuLabels;
   currentPath: string;
 }
 
@@ -14,9 +24,20 @@ interface Props {
  * MobileNav — the only interactive piece of the header. Renders a hamburger
  * that opens a full-screen overlay menu. Static markup (logo, desktop links)
  * stays in Nav.astro; this island is hydrated client:idle.
+ *
+ * Labels arrive bilingual and render as `data-lang` dual spans, so the same
+ * CSS language layer (html[data-lang]) drives the overlay with no extra JS.
  */
-export default function MobileNav({ links, currentPath }: Props) {
+export default function MobileNav({ links, menuLabels, currentPath }: Props) {
   const [open, setOpen] = useState(false);
+
+  // aria-label can't dual-render; resolve once from the active language.
+  const lang =
+    (typeof document !== 'undefined' &&
+      document.documentElement.getAttribute('data-lang')) ||
+    'en';
+  const openLabel = lang === 'es' ? menuLabels.openEs : menuLabels.openEn;
+  const closeLabel = lang === 'es' ? menuLabels.closeEs : menuLabels.closeEn;
 
   // Lock body scroll while the menu is open, and close on Escape.
   useEffect(() => {
@@ -38,12 +59,12 @@ export default function MobileNav({ links, currentPath }: Props) {
     <div className="md:hidden">
       <button
         type="button"
-        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-label={open ? closeLabel : openLabel}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className="relative z-[70] flex h-10 w-10 items-center justify-center"
       >
-        <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
+        <span className="sr-only">{open ? closeLabel : openLabel}</span>
         <svg
           width="24"
           height="24"
@@ -89,7 +110,14 @@ export default function MobileNav({ links, currentPath }: Props) {
                   }s both`,
                 }}
               >
-                {link.label}
+                <span className="t" data-k={link.href}>
+                  <span lang="en" data-lang="en">
+                    {link.en}
+                  </span>
+                  <span lang="es" data-lang="es">
+                    {link.es}
+                  </span>
+                </span>
               </a>
             ))}
           </nav>
