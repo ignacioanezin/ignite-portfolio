@@ -1,11 +1,19 @@
 ---
 import { CLIENTS, hasClients, CLIENTS_HEADING } from '@/data/clients';
 import { CLIENTS_DISPLAY } from '@/lib/site';
+import T from '@/components/T.astro';
 
 // Auto-hide when there are no real clients yet.
 const useSlider = CLIENTS_DISPLAY === 'slider';
 // For a seamless marquee we duplicate the list; the copy is hidden from a11y.
 const trackItems = useSlider ? [...CLIENTS, ...CLIENTS] : CLIENTS;
+
+// Translate whichever honesty-flexible heading is configured.
+const headingEs: Record<string, string> = {
+  Clients: 'Clientes',
+  'Worked with': 'Trabajé con',
+  'Races & events covered': 'Carreras y eventos cubiertos',
+};
 ---
 
 {
@@ -13,7 +21,7 @@ const trackItems = useSlider ? [...CLIENTS, ...CLIENTS] : CLIENTS;
     <section aria-label={CLIENTS_HEADING} class="bg-ink text-bone">
       <div class="container-rail py-14 md:py-20">
         <p class="eyebrow mb-9 text-center text-bone-faint" data-reveal>
-          {CLIENTS_HEADING}
+          <T en={CLIENTS_HEADING} es={headingEs[CLIENTS_HEADING] ?? CLIENTS_HEADING} />
         </p>
 
         {useSlider ? (

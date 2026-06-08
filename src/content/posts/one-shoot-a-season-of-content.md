@@ -1,7 +1,9 @@
 ---
 # SAMPLE POST — craft/approach essay in Ignacio's voice. Edit freely or delete.
 title: "One shoot, a season of content"
+title_es: "Una filmación, una temporada de contenido"
 description: "How a single embedded production becomes a hero film, social cutdowns, verticals, and stills — a whole asset ecosystem."
+description_es: "Cómo una sola producción desde adentro se convierte en un film principal, cortes para redes, verticales y fotos — todo un ecosistema de contenido."
 pubDate: 2026-04-02
 tags: ["strategy", "brand content", "deliverables"]
 ---

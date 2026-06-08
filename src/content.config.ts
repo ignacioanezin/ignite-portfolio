@@ -31,6 +31,16 @@ const projects = defineCollection({
       deliverables: z.array(z.string()), // the asset ecosystem
       result: z.string().optional(), // outcome — only if real/true
 
+      // Optional Spanish translations (EN fallback when absent). `excerpt_es`
+      // powers the bilingual listings; the long-form fields are the documented
+      // extension point for full case-study translation.
+      excerpt_es: z.string().optional(),
+      challenge_es: z.string().optional(),
+      strategy_es: z.string().optional(),
+      production_es: z.string().optional(),
+      result_es: z.string().optional(),
+      deliverables_es: z.array(z.string()).optional(),
+
       gallery: z.array(image()).optional(),
       featured: z.boolean().default(false),
       tags: z.array(z.string()).optional(),
@@ -51,6 +61,10 @@ const posts = defineCollection({
     z.object({
       title: z.string(),
       description: z.string(), // one line for the card + <meta description>
+      // Optional Spanish title/description (EN fallback when absent). The post
+      // body stays English this pass.
+      title_es: z.string().optional(),
+      description_es: z.string().optional(),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       heroImage: image().optional(),

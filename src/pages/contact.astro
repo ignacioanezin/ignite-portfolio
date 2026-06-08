@@ -1,37 +1,60 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { SITE } from '@/lib/site';
+import { ui } from '@/i18n/ui';
+import T from '@/components/T.astro';
 
 // Static site → the form posts to a third-party form endpoint (Formspree-style
 // placeholder). Swap FORM_ENDPOINT for your real one (see README). The form
 // works without JavaScript; a tiny enhancement just shows an inline success
 // state when the endpoint returns JSON.
 const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
+
+// Interpolated "based in" line, both languages.
+const basedEn = `${SITE.baseLocation} · shooting across ${SITE.shootingRegion}`;
+const basedEs = `${SITE.baseLocation} · filmando por ${SITE.shootingRegion}`;
+
+// Status strings for the client script, both languages (picked at runtime by
+// the active html[data-lang]).
+const statusI18n = {
+  en: {
+    unconfigured: ui.en['contact.status_unconfigured'],
+    sending: ui.en['contact.status_sending'],
+    success: ui.en['contact.status_success'],
+    error: ui.en['contact.status_error'],
+  },
+  es: {
+    unconfigured: ui.es['contact.status_unconfigured'],
+    sending: ui.es['contact.status_sending'],
+    success: ui.es['contact.status_success'],
+    error: ui.es['contact.status_error'],
+  },
+};
 ---
 
 <BaseLayout
   title="Contact"
-  description="Tell me about your race, launch, or athlete — and the outcome you need. Based in Córdoba, Argentina, shooting across Patagonia & the Andes."
+  titleEs="Contacto"
+  description={ui.en['contact.meta_desc']}
+  descriptionEs={ui.es['contact.meta_desc']}
 >
   <section class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
     <div class="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
       <!-- Left: pitch + direct details. -->
       <div data-reveal>
-        <p class="eyebrow mb-4">Contact</p>
+        <p class="eyebrow mb-4"><T k="contact.eyebrow" /></p>
         <h1
           class="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-6xl"
         >
-          Let’s talk about the film.
+          <T k="contact.h1" />
         </h1>
         <p class="mt-6 max-w-md text-lg leading-relaxed text-ink-dim">
-          The more you tell me about the outcome you’re after — entries,
-          sell-through, a signed athlete — the more useful my first reply will
-          be. I read every message myself.
+          <T k="contact.intro" />
         </p>
 
         <dl class="mt-10 space-y-6">
           <div>
-            <dt class="eyebrow mb-2">Email</dt>
+            <dt class="eyebrow mb-2"><T k="contact.email_label" /></dt>
             <dd>
               <a
                 href={`mailto:${SITE.email}`}
@@ -42,7 +65,7 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
             </dd>
           </div>
           <div>
-            <dt class="eyebrow mb-2">Instagram</dt>
+            <dt class="eyebrow mb-2"><T k="contact.ig_label" /></dt>
             <dd>
               <a
                 href={SITE.social.instagram}
@@ -55,9 +78,9 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
             </dd>
           </div>
           <div>
-            <dt class="eyebrow mb-2">Based in</dt>
+            <dt class="eyebrow mb-2"><T k="contact.based_label" /></dt>
             <dd class="text-lg text-ink-dim">
-              {SITE.baseLocation} · shooting across {SITE.shootingRegion}
+              <T en={basedEn} es={basedEs} />
             </dd>
           </div>
         </dl>
@@ -65,6 +88,12 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
 
       <!-- Right: the form. -->
       <div data-reveal>
+        <script
+          id="contact-i18n"
+          type="application/json"
+          is:inline
+          set:html={JSON.stringify(statusI18n)}
+        />
         <form
           id="contact-form"
           action={FORM_ENDPOINT}
@@ -82,7 +111,7 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
           <div class="space-y-5">
             <div>
               <label for="name" class="mb-2 block text-sm font-medium text-ink">
-                Name
+                <T k="contact.name" />
               </label>
               <input
                 id="name"
@@ -96,7 +125,7 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
 
             <div>
               <label for="email" class="mb-2 block text-sm font-medium text-ink">
-                Email
+                <T k="contact.email_label" />
               </label>
               <input
                 id="email"
@@ -113,7 +142,7 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
                 for="message"
                 class="mb-2 block text-sm font-medium text-ink"
               >
-                What are you building?
+                <T k="contact.message" />
               </label>
               <textarea
                 id="message"
@@ -126,7 +155,7 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
           </div>
 
           <button type="submit" class="btn-ink mt-6 w-full justify-center">
-            Send message
+            <T k="contact.send" />
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
@@ -141,11 +170,12 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
           </p>
 
           <p class="mt-4 text-xs leading-relaxed text-ink-faint">
-            Prefer email? Write to
-            <a href={`mailto:${SITE.email}`} class="link-underline text-ink-dim">
-              {SITE.email}
-            </a>
-            directly.
+            <T
+              en="Prefer email? Write to "
+              es="¿Preferís email? Escribime directo a "
+            /><a href={`mailto:${SITE.email}`} class="link-underline text-ink-dim"
+              >{SITE.email}</a
+            ><T en=" directly." es="." />
           </p>
         </form>
       </div>
@@ -175,7 +205,8 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
 
 <script>
   // Progressive enhancement: keep the visitor on-page on success. Without JS the
-  // form still posts normally to the endpoint.
+  // form still posts normally to the endpoint. Status strings are localised from
+  // the embedded #contact-i18n payload using the active language.
   function initContactForm() {
     const form = document.getElementById(
       'contact-form'
@@ -184,20 +215,33 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
     if (!form || form.dataset.bound) return;
     form.dataset.bound = 'true';
 
+    const t = (key: 'unconfigured' | 'sending' | 'success' | 'error') => {
+      const lang =
+        document.documentElement.getAttribute('data-lang') === 'es'
+          ? 'es'
+          : 'en';
+      try {
+        const data = JSON.parse(
+          document.getElementById('contact-i18n')?.textContent || '{}'
+        );
+        return data[lang]?.[key] ?? data.en?.[key] ?? '';
+      } catch {
+        return '';
+      }
+    };
+
     form.addEventListener('submit', async (e) => {
-      // Only intercept when the endpoint has actually been configured.
       if (form.action.includes('your-form-id')) {
         e.preventDefault();
         if (status) {
-          status.textContent =
-            'Form endpoint not configured yet — email me directly for now.';
+          status.textContent = t('unconfigured');
           status.style.color = 'var(--color-ink)';
         }
         return;
       }
 
       e.preventDefault();
-      if (status) status.textContent = 'Sending…';
+      if (status) status.textContent = t('sending');
       try {
         const res = await fetch(form.action, {
           method: 'POST',
@@ -206,15 +250,12 @@ const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
         });
         if (res.ok) {
           form.reset();
-          if (status) status.textContent = 'Thanks — I’ll be in touch soon.';
+          if (status) status.textContent = t('success');
         } else {
           throw new Error('Bad response');
         }
       } catch {
-        if (status) {
-          status.textContent =
-            'Something went wrong. Please email me directly.';
-        }
+        if (status) status.textContent = t('error');
       }
     });
   }

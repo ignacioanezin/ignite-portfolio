@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { CATEGORY_META } from '@/content.config';
 import type { CollectionEntry } from 'astro:content';
+import T from '@/components/T.astro';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -71,7 +72,7 @@ const divider = onDark ? 'border-bone/12' : 'border-line';
           : 'bg-ink/85 text-bone',
       ]}
     >
-      {category.label}
+      <T k={`cat.${data.category}`} />
     </span>
   </div>
 
@@ -87,7 +88,9 @@ const divider = onDark ? 'border-bone/12' : 'border-line';
       </h3>
       <span class:list={['shrink-0 text-sm', meta]}>{data.year}</span>
     </div>
-    <p class:list={['mt-1.5 text-sm leading-relaxed', excerpt]}>{data.excerpt}</p>
+    <p class:list={['mt-1.5 text-sm leading-relaxed', excerpt]}>
+      <T en={data.excerpt} es={data.excerpt_es ?? data.excerpt} />
+    </p>
     {
       data.client && (
         <p class:list={['mt-2 text-xs uppercase tracking-wider', meta]}>

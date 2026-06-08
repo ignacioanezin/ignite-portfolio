@@ -1,7 +1,9 @@
 ---
 # SAMPLE POST — craft/approach essay in Ignacio's voice. Edit freely or delete.
 title: "A camera kit you can actually run with"
+title_es: "Un equipo de cámara con el que realmente podés correr"
 description: "Notes on building a lightweight, self-sufficient filmmaking kit for trail and mountain races — where every gram has to earn its place."
+description_es: "Apuntes sobre armar un equipo de filmación liviano y autosuficiente para carreras de trail y montaña — donde cada gramo tiene que ganarse su lugar."
 pubDate: 2026-02-20
 tags: ["gear", "production", "field notes"]
 ---

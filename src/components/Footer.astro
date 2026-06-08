@@ -1,5 +1,6 @@
 ---
 import { SITE, NAV_LINKS } from '@/lib/site';
+import T from '@/components/T.astro';
 const year = new Date().getFullYear();
 ---
 
@@ -13,7 +14,7 @@ const year = new Date().getFullYear();
           {SITE.name}
         </p>
         <p class="mt-3 max-w-xs text-sm leading-relaxed text-bone-dim">
-          {SITE.heroStatement}
+          <T k="site.statement" />
         </p>
         <p class="mt-4 text-sm text-bone-faint">
           {SITE.baseLocation} · {SITE.shootingRegion}
@@ -22,7 +23,7 @@ const year = new Date().getFullYear();
 
       <!-- Nav -->
       <nav aria-label="Footer">
-        <p class="eyebrow mb-4 text-bone-faint">Site</p>
+        <p class="eyebrow mb-4 text-bone-faint"><T k="footer.site" /></p>
         <ul class="space-y-2.5">
           {
             NAV_LINKS.map((link) => (
@@ -31,7 +32,7 @@ const year = new Date().getFullYear();
                   href={link.href}
                   class="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
                 >
-                  {link.label}
+                  <T k={link.key} />
                 </a>
               </li>
             ))
@@ -41,7 +42,7 @@ const year = new Date().getFullYear();
               href="/blog"
               class="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
             >
-              Journal
+              <T k="nav.blog" />
             </a>
           </li>
         </ul>
@@ -49,7 +50,7 @@ const year = new Date().getFullYear();
 
       <!-- Contact -->
       <div>
-        <p class="eyebrow mb-4 text-bone-faint">Get in touch</p>
+        <p class="eyebrow mb-4 text-bone-faint"><T k="footer.getintouch" /></p>
         <ul class="space-y-2.5">
           <li>
             <a
@@ -76,8 +77,8 @@ const year = new Date().getFullYear();
     <div
       class="mt-14 flex flex-col gap-2 border-t border-bone/10 pt-6 text-xs text-bone-faint sm:flex-row sm:items-center sm:justify-between"
     >
-      <p>© {year} {SITE.name}. All rights reserved.</p>
-      <p>Athlete-filmmaker · {SITE.shootingRegion}</p>
+      <p>© {year} {SITE.name}. <T k="footer.rights" /></p>
+      <p><T k="footer.tagline2" /> · {SITE.shootingRegion}</p>
     </div>
   </div>
 </footer>

@@ -1,26 +1,13 @@
 ---
-// How an engagement works — framed as a partner, not a camera-for-hire.
+import T from '@/components/T.astro';
+
+// How an engagement works — framed as a partner, not a camera-for-hire. Copy
+// lives in the i18n dictionary (process.*); we just map the step keys here.
 const steps = [
-  {
-    n: '01',
-    title: 'Brief & positioning',
-    body: 'We start with the outcome you need — entries, sell-through, a signed athlete — not a shot list. I pressure-test the idea against your audience before anyone packs a bag.',
-  },
-  {
-    n: '02',
-    title: 'Embedded production',
-    body: 'I shoot from inside the effort. Running the race, carrying the kit up the approach — the access an external crew can’t replicate is the whole point, and it’s where the real footage lives.',
-  },
-  {
-    n: '03',
-    title: 'The asset ecosystem',
-    body: 'One production becomes many assets: a hero film, social cutdowns, vertical clips, stills. You leave with a campaign’s worth of content, not a single video.',
-  },
-  {
-    n: '04',
-    title: 'Launch & iterate',
-    body: 'Masters in every ratio your channels need, delivered ready to run. We look at what landed and shape the next one around it.',
-  },
+  { n: '01', key: 's1' },
+  { n: '02', key: 's2' },
+  { n: '03', key: 's3' },
+  { n: '04', key: 's4' },
 ];
 ---
 
@@ -30,9 +17,9 @@ const steps = [
 >
   <div class="container-rail py-20 md:py-28">
     <div class="mb-14 max-w-2xl" data-reveal>
-      <p class="eyebrow mb-3">How it works</p>
+      <p class="eyebrow mb-3"><T k="process.eyebrow" /></p>
       <h2 class="text-4xl font-semibold md:text-5xl">
-        A partner in the story, not a camera for hire.
+        <T k="process.h2" />
       </h2>
     </div>
 
@@ -43,9 +30,11 @@ const steps = [
             <span class="font-display text-3xl font-medium tracking-tight text-ink-faint">
               {step.n}
             </span>
-            <h3 class="mt-4 text-xl font-medium">{step.title}</h3>
+            <h3 class="mt-4 text-xl font-medium">
+              <T k={`process.${step.key}.title`} />
+            </h3>
             <p class="mt-3 text-sm leading-relaxed text-ink-dim">
-              {step.body}
+              <T k={`process.${step.key}.body`} />
             </p>
           </li>
         ))

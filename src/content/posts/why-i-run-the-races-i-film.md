@@ -1,7 +1,9 @@
 ---
 # SAMPLE POST — craft/approach essay in Ignacio's voice. Edit freely or delete.
 title: "Why I run the races I film"
+title_es: "Por qué corro las carreras que filmo"
 description: "The case for embedded sports filmmaking — and the frames you can only get from inside the effort."
+description_es: "El caso a favor de filmar el deporte desde adentro — y los planos que solo se consiguen dentro del esfuerzo."
 pubDate: 2026-05-18
 tags: ["embedded", "approach", "trail running"]
 ---

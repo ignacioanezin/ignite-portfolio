@@ -3,7 +3,9 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import WorkFilter from '@/components/react/WorkFilter.tsx';
+import T from '@/components/T.astro';
 import { CATEGORY_META, type CategoryKey } from '@/content.config';
+import { ui } from '@/i18n/ui';
 
 // Full curated grid. Newest first; equal hierarchy (no hero card), per brief.
 const projects = (await getCollection('projects')).sort(
@@ -22,33 +24,41 @@ const categories = (Object.keys(CATEGORY_META) as CategoryKey[])
   .sort((a, b) => CATEGORY_META[a].order - CATEGORY_META[b].order)
   .map((key) => ({
     key,
-    label: CATEGORY_META[key].label,
+    en: ui.en[`cat.${key}`],
+    es: ui.es[`cat.${key}`],
     count: counts[key],
   }));
 ---
 
 <BaseLayout
   title="Work"
-  description="Selected films for outdoor and trail-running brands, races, and athletes — embedded from inside the effort."
+  titleEs="Trabajo"
+  description={ui.en['work.meta_desc']}
+  descriptionEs={ui.es['work.meta_desc']}
 >
   <section class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
     <!-- Header -->
     <div class="max-w-3xl" data-reveal>
-      <p class="eyebrow mb-4">Selected work</p>
+      <p class="eyebrow mb-4"><T k="work.eyebrow" /></p>
       <h1
         class="font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
       >
-        Films that move athletes, brands, and start lists.
+        <T k="work.h1" />
       </h1>
       <p class="mt-6 max-w-xl text-lg leading-relaxed text-ink-dim">
-        Every project is a transformation, not a clip — shot from inside the
-        race or the climb, then built out into a season's worth of assets.
+        <T k="work.intro" />
       </p>
     </div>
 
     <!-- Filter + grid -->
     <div class="mt-12 md:mt-16" data-reveal>
-      <WorkFilter categories={categories} total={projects.length} client:idle />
+      <WorkFilter
+        categories={categories}
+        total={projects.length}
+        allEn={ui.en['filter.all']}
+        allEs={ui.es['filter.all']}
+        client:idle
+      />
       <p
         id="work-filter-status"
         class="sr-only"

@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import YouTubeFacade from '@/components/YouTubeFacade.astro';
-import { CATEGORY_META } from '@/content.config';
+import T from '@/components/T.astro';
 import { SITE } from '@/lib/site';
 
 // One static page per project. `id` is the filename slug (matches ProjectCard's
@@ -18,27 +18,32 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { data } = project;
-const category = CATEGORY_META[data.category];
 
 // Optional author's-note body (markdown under the frontmatter).
 const { Content } = await render(project);
 
 // The case-study spine, in brief order. Result is rendered only when present
-// (honesty rule: no invented outcomes).
+// (honesty rule: no invented outcomes). Long-form bodies fall back to English
+// when a Spanish translation isn't supplied yet.
 const sections = [
-  { key: 'challenge', label: 'The challenge', body: data.challenge },
-  { key: 'strategy', label: 'The strategy', body: data.strategy },
-  { key: 'production', label: 'The production', body: data.production },
+  { key: 'cs.challenge', en: data.challenge, es: data.challenge_es ?? data.challenge },
+  { key: 'cs.strategy', en: data.strategy, es: data.strategy_es ?? data.strategy },
+  { key: 'cs.production', en: data.production, es: data.production_es ?? data.production },
   ...(data.result
-    ? [{ key: 'result', label: 'The result', body: data.result }]
+    ? [{ key: 'cs.result', en: data.result, es: data.result_es ?? data.result }]
     : []),
 ];
 
+const deliverables = data.deliverables.map((d, i) => ({
+  en: d,
+  es: data.deliverables_es?.[i] ?? d,
+}));
+
 const meta = [
-  { label: 'Role', value: data.role },
-  { label: 'Year', value: String(data.year) },
-  { label: 'Location', value: data.location },
-  ...(data.client ? [{ label: 'Client', value: data.client }] : []),
+  { key: 'cs.role', value: data.role },
+  { key: 'cs.year', value: String(data.year) },
+  { key: 'cs.location', value: data.location },
+  ...(data.client ? [{ key: 'cs.client', value: data.client }] : []),
 ];
 
 // JSON-LD: a VideoObject helps the case study surface as rich media.
@@ -57,6 +62,7 @@ const videoSchema = {
 <BaseLayout
   title={data.title}
   description={data.excerpt}
+  descriptionEs={data.excerpt_es ?? data.excerpt}
   ogType="article"
 >
   <script
@@ -76,10 +82,10 @@ const videoSchema = {
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" class="transition-transform group-hover:-translate-x-1">
           <path d="M13 8H3M7 4L3 8l4 4" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-        All work
+        <T k="cs.back" />
       </a>
 
-      <p class="eyebrow mt-8 mb-4" data-reveal>{category.label}</p>
+      <p class="eyebrow mt-8 mb-4" data-reveal><T k={`cat.${data.category}`} /></p>
       <h1
         class="max-w-4xl font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
         data-reveal
@@ -87,7 +93,7 @@ const videoSchema = {
         {data.title}
       </h1>
       <p class="mt-6 max-w-2xl text-xl leading-snug text-ink-dim" data-reveal>
-        {data.excerpt}
+        <T en={data.excerpt} es={data.excerpt_es ?? data.excerpt} />
       </p>
     </header>
 
@@ -109,7 +115,7 @@ const videoSchema = {
           meta.map((m) => (
             <div>
               <dt class="text-xs uppercase tracking-wider text-ink-faint">
-                {m.label}
+                <T k={m.key} />
               </dt>
               <dd class="mt-1.5 text-sm font-medium text-ink">{m.value}</dd>
             </div>
@@ -123,7 +129,7 @@ const videoSchema = {
       <div class="grid gap-x-16 gap-y-12 lg:grid-cols-[1fr_1.4fr]">
         <div class="lg:sticky lg:top-28 lg:self-start" data-reveal>
           <h2 class="text-3xl font-medium tracking-tight md:text-4xl">
-            One shoot. A campaign's worth of assets.
+            <T k="cs.spine_h2" />
           </h2>
         </div>
 
@@ -131,9 +137,9 @@ const videoSchema = {
           {
             sections.map((s) => (
               <section data-reveal>
-                <h3 class="eyebrow mb-3">{s.label}</h3>
+                <h3 class="eyebrow mb-3"><T k={s.key} /></h3>
                 <p class="text-lg leading-relaxed text-ink-dim md:text-xl">
-                  {s.body}
+                  <T en={s.en} es={s.es} />
                 </p>
               </section>
             ))
@@ -141,10 +147,10 @@ const videoSchema = {
 
           <!-- Deliverables = the content ecosystem. -->
           <section data-reveal>
-            <h3 class="eyebrow mb-4">The content ecosystem</h3>
+            <h3 class="eyebrow mb-4"><T k="cs.ecosystem" /></h3>
             <ul class="space-y-3">
               {
-                data.deliverables.map((d) => (
+                deliverables.map((d) => (
                   <li class="flex gap-3 text-lg leading-relaxed text-ink-dim">
                     <svg
                       width="20"
@@ -158,7 +164,7 @@ const videoSchema = {
                     >
                       <path d="M4 10.5l3.5 3.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <span>{d}</span>
+                    <span><T en={d.en} es={d.es} /></span>
                   </li>
                 ))
               }
@@ -214,20 +220,19 @@ const videoSchema = {
       <div class="container-rail py-20 md:py-28">
         <div class="mx-auto max-w-2xl text-center" data-reveal>
           <h2 class="text-3xl font-medium tracking-tight md:text-5xl">
-            Have a project like this?
+            <T k="cs.cta_h2" />
           </h2>
           <p class="mx-auto mt-5 max-w-lg text-lg text-bone-dim">
-            Tell me the race, the launch, or the athlete — and the outcome you
-            need from it.
+            <T k="cs.cta_body" />
           </p>
           <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
             <a href="/contact" class="btn-bone">
-              Start a conversation
+              <T k="cta.start" />
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                 <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </a>
-            <a href="/work" class="btn-ghost-dark">See more work</a>
+            <a href="/work" class="btn-ghost-dark"><T k="cs.more" /></a>
           </div>
         </div>
       </div>

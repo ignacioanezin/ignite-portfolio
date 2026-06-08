@@ -26,3 +26,6 @@ pnpm-debug.log*
 # editor
 .vscode/
 .idea/
+
+# local tooling (per-machine Claude Code config)
+.claude/

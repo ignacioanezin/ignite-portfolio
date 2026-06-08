@@ -2,50 +2,69 @@ import { useState } from 'react';
 
 interface Category {
   key: string;
-  label: string;
+  /** Bilingual labels — rendered as dual spans; CSS shows the active language. */
+  en: string;
+  es: string;
   count: number;
 }
 
 interface Props {
   categories: Category[];
   total: number;
+  /** Bilingual "All work" label. */
+  allEn: string;
+  allEs: string;
 }
 
 /**
- * WorkFilter — the only interactive piece of the Work page. The project cards
- * are server-rendered by Astro (so they keep <Image> optimization + the
- * hover-preview script); this island just owns the filter UI and toggles card
- * visibility by category. No reload, no re-fetch — it flips a `hidden` class on
- * the matching `[data-work-item]` elements. One of the sanctioned React islands.
+ * WorkFilter — the only interactive piece of the Work page. Project cards are
+ * server-rendered by Astro (keeping <Image> + hover-preview); this island owns
+ * the filter UI and toggles card visibility by category. No reload, no re-fetch.
+ *
+ * Bilingual: button labels render as `data-lang` dual spans (the shared CSS
+ * language layer shows the active one); the aria-live status is built in the
+ * active language read from html[data-lang] at click time.
  */
-export default function WorkFilter({ categories, total }: Props) {
+export default function WorkFilter({
+  categories,
+  total,
+  allEn,
+  allEs,
+}: Props) {
   const [active, setActive] = useState<string>('all');
 
-  const tabs = [{ key: 'all', label: 'All work', count: total }, ...categories];
+  const tabs = [
+    { key: 'all', en: allEn, es: allEs, count: total },
+    ...categories,
+  ];
+
+  function statusText(key: string) {
+    const lang =
+      document.documentElement.getAttribute('data-lang') === 'es' ? 'es' : 'en';
+    const cat = categories.find((c) => c.key === key);
+    const shown = key === 'all' ? total : (cat?.count ?? 0);
+    if (lang === 'es') {
+      const noun = shown === 1 ? 'proyecto' : 'proyectos';
+      return key === 'all'
+        ? `Mostrando ${shown} ${noun}.`
+        : `Mostrando ${shown} ${noun} en ${cat?.es ?? ''}.`;
+    }
+    const noun = shown === 1 ? 'project' : 'projects';
+    return key === 'all'
+      ? `Showing ${shown} ${noun}.`
+      : `Showing ${shown} ${noun} in ${cat?.en ?? ''}.`;
+  }
 
   function apply(key: string) {
     setActive(key);
-    const items =
-      document.querySelectorAll<HTMLElement>('[data-work-item]');
-    items.forEach((el) => {
-      const show = key === 'all' || el.dataset.category === key;
-      el.classList.toggle('hidden', !show);
-    });
-    // Announce the result count for screen readers.
+    document
+      .querySelectorAll<HTMLElement>('[data-work-item]')
+      .forEach((el) => {
+        const show = key === 'all' || el.dataset.category === key;
+        el.classList.toggle('hidden', !show);
+      });
     const live = document.getElementById('work-filter-status');
-    if (live) {
-      const shown =
-        key === 'all'
-          ? total
-          : categories.find((c) => c.key === key)?.count ?? 0;
-      const label =
-        key === 'all'
-          ? 'all work'
-          : categories.find((c) => c.key === key)?.label ?? '';
-      live.textContent = `Showing ${shown} ${
-        shown === 1 ? 'project' : 'projects'
-      }${key === 'all' ? '' : ` in ${label}`}.`;
-    }
+    if (live) live.textContent = statusText(key);
   }
 
   return (
@@ -64,7 +83,14 @@ export default function WorkFilter({ categories, total }: Props) {
                 : 'border-line text-ink-dim hover:border-ink/40 hover:text-ink'
             }`}
           >
-            {tab.label}
+            <span className="t">
+              <span lang="en" data-lang="en">
+                {tab.en}
+              </span>
+              <span lang="es" data-lang="es">
+                {tab.es}
+              </span>
+            </span>
             <span
               className={`text-xs tabular-nums ${
                 isActive ? 'text-bone/60' : 'text-ink-faint'

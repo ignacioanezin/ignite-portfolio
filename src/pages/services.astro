@@ -1,66 +1,34 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import T from '@/components/T.astro';
+import { ui } from '@/i18n/ui';
 
 // Three tiers packaged around OUTCOMES, not deliverables, and no pricing — the
-// conversation sets scope. Single CTA per the brief.
+// conversation sets scope. Copy lives in the i18n dictionary (svc.*).
 const tiers = [
-  {
-    name: 'Embedded',
-    forWho: 'For a single race, expedition, or athlete moment.',
-    outcome:
-      'One unrepeatable effort, captured from the inside and turned into a film people actually finish watching.',
-    includes: [
-      'Embedded capture from inside the race or climb',
-      'One hero film, festival- and sponsor-ready',
-      'A set of vertical cutdowns for social',
-      'Graded stills for press and partnerships',
-    ],
-  },
-  {
-    name: 'Campaign',
-    forWho: 'For a product launch or brand story with a goal attached.',
-    outcome:
-      'A coordinated body of content built to move a number — entries, sell-through, sign-ups — not just to look good.',
-    includes: [
-      'Positioning and creative built around your outcome',
-      'Multi-day production across locations',
-      'Hero film + full social ecosystem in every ratio',
-      'Sponsor- or channel-specific edits',
-    ],
-    featured: true,
-  },
-  {
-    name: 'Retainer',
-    forWho: 'For brands and races that need a season of content.',
-    outcome:
-      'A consistent visual voice across your whole season, from one filmmaker who already knows the sport and your audience.',
-    includes: [
-      'A planned slate of shoots across the season',
-      'Priority booking around your race calendar',
-      'A growing library of films, clips, and stills',
-      'One point of contact who runs the races too',
-    ],
-  },
+  { id: 'embedded', featured: false },
+  { id: 'campaign', featured: true },
+  { id: 'retainer', featured: false },
 ];
 ---
 
 <BaseLayout
   title="Services"
-  description="Three ways to work together — Embedded, Campaign, and Retainer — each packaged around the outcome you need, not a list of deliverables."
+  titleEs="Servicios"
+  description={ui.en['services.meta_desc']}
+  descriptionEs={ui.es['services.meta_desc']}
 >
   <!-- Lead — LIGHT. -->
   <section class="container-rail pt-32 pb-12 md:pt-40 md:pb-16">
     <div class="max-w-3xl" data-reveal>
-      <p class="eyebrow mb-4">Services</p>
+      <p class="eyebrow mb-4"><T k="services.eyebrow" /></p>
       <h1
         class="font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
       >
-        Outcomes, not packages of footage.
+        <T k="services.h1" />
       </h1>
       <p class="mt-6 max-w-xl text-lg leading-relaxed text-ink-dim">
-        Three ways in, depending on how much you need and how often. No price
-        list — scope and budget come out of a short conversation about what
-        you’re trying to move.
+        <T k="services.intro" />
       </p>
     </div>
   </section>
@@ -86,11 +54,11 @@ const tiers = [
                   tier.featured ? 'text-bone' : 'text-ink',
                 ]}
               >
-                {tier.name}
+                <T k={`svc.${tier.id}.name`} />
               </h2>
               {tier.featured && (
                 <span class="rounded-full border border-bone/40 px-3 py-1 text-[0.7rem] font-medium uppercase tracking-wider text-bone">
-                  Most booked
+                  <T k="services.most_booked" />
                 </span>
               )}
             </div>
@@ -101,7 +69,7 @@ const tiers = [
                 tier.featured ? 'text-bone-dim' : 'text-ink-faint',
               ]}
             >
-              {tier.forWho}
+              <T k={`svc.${tier.id}.for`} />
             </p>
 
             <p
@@ -110,11 +78,11 @@ const tiers = [
                 tier.featured ? 'text-bone-dim' : 'text-ink-dim',
               ]}
             >
-              {tier.outcome}
+              <T k={`svc.${tier.id}.outcome`} />
             </p>
 
             <ul class="mt-7 space-y-3">
-              {tier.includes.map((item) => (
+              {[1, 2, 3, 4].map((n) => (
                 <li
                   class:list={[
                     'flex gap-3 text-sm leading-relaxed',
@@ -136,7 +104,7 @@ const tiers = [
                   >
                     <path d="M4 10.5l3.5 3.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
-                  <span>{item}</span>
+                  <span><T k={`svc.${tier.id}.i${n}`} /></span>
                 </li>
               ))}
             </ul>
@@ -148,7 +116,7 @@ const tiers = [
                 tier.featured ? 'btn-bone' : 'btn-ghost',
               ]}
             >
-              Start a conversation
+              <T k="services.tier_cta" />
             </a>
           </div>
         ))
@@ -162,17 +130,15 @@ const tiers = [
       <div class="grid items-center gap-8 md:grid-cols-[1.4fr_1fr]" data-reveal>
         <div>
           <h2 class="text-2xl font-medium tracking-tight md:text-3xl">
-            Not sure which fits?
+            <T k="services.reassure_h2" />
           </h2>
           <p class="mt-3 max-w-xl text-lg leading-relaxed text-ink-dim">
-            Tell me the outcome you’re after and I’ll tell you honestly whether
-            it’s a single film or a season. I only take on a handful of projects
-            at a time, so every one gets the legs it deserves.
+            <T k="services.reassure_body" />
           </p>
         </div>
         <div class="flex md:justify-end">
           <a href="/contact" class="btn-ink">
-            Get in touch
+            <T k="services.reassure_cta" />
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
