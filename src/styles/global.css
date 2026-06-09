@@ -282,16 +282,21 @@
   transform: none;
 }
 
-/* Heading "rise" variant — the text wipes up into frame (clip-path) on top of
-   the fade/translate. The signature premium reveal; used sparingly (hero). */
+/* Heading "rise" variant — the text wipes up into frame. The clip lives on an
+   INNER wrapper (.rise-mask), never the observed [data-reveal] element: a fully
+   clipped element reports as non-intersecting to IntersectionObserver and would
+   never reveal. The element itself just fades (opacity, no translate). */
 [data-reveal='rise'] {
-  clip-path: inset(-3% -3% 100% -3%);
-  transition: opacity 1s var(--ease-cinematic),
-    transform 1s var(--ease-cinematic), clip-path 1s var(--ease-cinematic);
+  transform: none;
+}
+[data-reveal='rise'] .rise-mask {
+  display: block;
+  clip-path: inset(-6% -6% 100%);
+  transition: clip-path 1s var(--ease-cinematic);
   transition-delay: var(--reveal-delay, 0s);
 }
-[data-reveal='rise'].is-visible {
-  clip-path: inset(-3% -3% -3% -3%);
+[data-reveal='rise'].is-visible .rise-mask {
+  clip-path: inset(-6%);
 }
 
 /* Image fade-in on load (applied to the aspect wrapper, never the <img>, so it
@@ -334,7 +339,7 @@
     opacity: 1 !important;
     transform: none !important;
   }
-  [data-reveal='rise'] {
+  [data-reveal='rise'] .rise-mask {
     clip-path: none !important;
   }
 }

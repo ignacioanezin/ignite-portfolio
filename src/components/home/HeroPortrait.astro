@@ -55,8 +55,10 @@ const [first, last] = SITE.name.split(' ');
         style="font-size: var(--text-display); line-height: var(--text-display--line-height); letter-spacing: var(--text-display--letter-spacing);"
         data-reveal="rise"
       >
-        <span class="block">{first}</span>
-        <span class="block">{last}</span>
+        <span class="rise-mask">
+          <span class="block">{first}</span>
+          <span class="block">{last}</span>
+        </span>
       </h1>
 
       <p
