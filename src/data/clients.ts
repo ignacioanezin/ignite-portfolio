@@ -29,39 +29,17 @@ export interface Client {
   svg: string;
 }
 
-// Simple geometric placeholder wordmarks (viewBox ~ 160×40, currentColor).
-export const CLIENTS: Client[] = [
-  {
-    name: 'Sierra Skyrace',
-    svg: `<svg viewBox="0 0 168 40" fill="currentColor" role="img" aria-label="Sierra Skyrace">
-      <path d="M4 30 16 12l8 12 8-16 10 22z" fill="none" stroke="currentColor" stroke-width="2.4"/>
-      <text x="58" y="26" font-family="sans-serif" font-size="17" font-weight="700" letter-spacing="0.5">SIERRA</text>
-    </svg>`,
-  },
-  {
-    name: 'Cumbre Apparel',
-    svg: `<svg viewBox="0 0 168 40" fill="currentColor" role="img" aria-label="Cumbre Apparel">
-      <path d="M8 28l12-18 12 18z" />
-      <text x="44" y="26" font-family="sans-serif" font-size="17" font-weight="700" letter-spacing="1">CUMBRE</text>
-    </svg>`,
-  },
-  {
-    name: 'Andes Trail Co.',
-    svg: `<svg viewBox="0 0 168 40" fill="currentColor" role="img" aria-label="Andes Trail Co.">
-      <circle cx="18" cy="20" r="11" fill="none" stroke="currentColor" stroke-width="2.4"/>
-      <path d="M18 9v22M9 20h18" stroke="currentColor" stroke-width="2.4"/>
-      <text x="40" y="26" font-family="sans-serif" font-size="16" font-weight="700" letter-spacing="0.5">ANDES TRAIL</text>
-    </svg>`,
-  },
-  {
-    name: 'Patagonia Wild',
-    svg: `<svg viewBox="0 0 168 40" fill="currentColor" role="img" aria-label="Patagonia Wild">
-      <rect x="6" y="10" width="20" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="2.4"/>
-      <path d="M10 24l5-7 4 5 3-4 4 6" fill="none" stroke="currentColor" stroke-width="2"/>
-      <text x="36" y="26" font-family="sans-serif" font-size="15" font-weight="700" letter-spacing="0.5">WILD CO.</text>
-    </svg>`,
-  },
-];
+// Real clients/races only (honesty rule). Empty for launch → the trust wall
+// auto-hides via `hasClients`. Add real SVG wordmarks here when available; use
+// `fill="currentColor"` so the wall can normalise them to one tone. Template:
+//
+//   {
+//     name: 'Race or Brand',
+//     svg: `<svg viewBox="0 0 168 40" fill="currentColor" role="img" aria-label="Race or Brand">
+//       <text x="0" y="26" font-family="sans-serif" font-size="17" font-weight="700">NAME</text>
+//     </svg>`,
+//   },
+export const CLIENTS: Client[] = [];
 
 /** True only when there is at least one real client to show. */
 export const hasClients = CLIENTS.length > 0;

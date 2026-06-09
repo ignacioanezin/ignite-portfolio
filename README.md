@@ -149,14 +149,31 @@ shows a friendly "email me directly" message instead of submitting.
 
 - Per-page `<title>`/meta, Open Graph + Twitter cards (`BaseLayout.astro`).
 - JSON-LD `Person` site-wide; `VideoObject` on each case study.
-- `@astrojs/sitemap` generates `/sitemap-index.xml`; `public/robots.txt` points
-  to it. Update `SITE.url` in `src/lib/site.ts` before deploy so canonical URLs,
-  OG tags, and the sitemap use the real domain.
+- `@astrojs/sitemap` generates `/sitemap-index.xml`; `robots.txt` is a dynamic
+  endpoint (`src/pages/robots.txt.ts`) tied to the `SITE.indexable` flag.
+- Update `SITE.url` in `src/lib/site.ts` before deploy so canonical URLs, OG tags,
+  and the sitemap use the real domain.
+
+## Preview vs. public (indexing)
+
+`src/lib/site.ts` has a master switch, **`SITE.indexable`**:
+
+- **`false` (default)** — preview mode. Every page ships `noindex,nofollow` and
+  `robots.txt` returns `Disallow: /`. Use this to deploy a shareable live URL
+  without search engines indexing sample/placeholder content.
+- **`true`** — public. Pages are indexable and `robots.txt` allows crawling and
+  advertises the sitemap.
+
+Flip to `true` only once real content is in (real projects/results, real client
+logos in `src/data/clients.ts`, real metrics, a real OG image).
 
 ## Deploy to Vercel
 
 1. Push to a Git repo and import it in Vercel (framework preset: **Astro**).
 2. Set the production domain, then update `SITE.url` in `src/lib/site.ts`.
 3. Replace `public/og/og-default.jpg` with a real 1200×630 share image.
+4. Wire the contact form: set the real `FORM_ENDPOINT` in
+   `src/pages/contact.astro` (or leave it — the page falls back to the mailto).
+5. When ready for the public launch, set `SITE.indexable = true` and redeploy.
 
 No env vars are required for the static build.

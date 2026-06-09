@@ -8,6 +8,14 @@ export const SITE = {
   /** Used for canonical URLs, sitemap, OG tags. Update before deploy. */
   url: 'https://ignacioanezin.com',
 
+  /**
+   * Master switch for search-engine indexing. While `false` the whole site
+   * ships `noindex,nofollow` (BaseLayout) and a `Disallow: /` robots.txt — used
+   * for the live PREVIEW deploy so the sample/fictional content never gets
+   * indexed. Flip to `true` once real content is in to go public.
+   */
+  indexable: false,
+
   name: 'Ignacio Anezin',
   /** One-word positioning tag. */
   tagline: 'Filmmaker',
