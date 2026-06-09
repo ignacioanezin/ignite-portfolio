@@ -6,6 +6,7 @@ import MetricsStrip from '@/components/home/MetricsStrip.astro';
 import ClientsWall from '@/components/home/ClientsWall.astro';
 import FeaturedWork from '@/components/home/FeaturedWork.astro';
 import Process from '@/components/home/Process.astro';
+import BlogTeaser from '@/components/home/BlogTeaser.astro';
 import CtaSection from '@/components/home/CtaSection.astro';
 
 // Reel-mode hero is dark → nav chrome flips to light text.
@@ -13,11 +14,12 @@ import CtaSection from '@/components/home/CtaSection.astro';
 
 <BaseLayout darkChrome={heroIsReel}>
   {/* Order matters (per brief):
-      hero → proof (metrics + clients) → featured work → process → CTA */}
+      hero → proof (metrics + clients) → featured work → process → blog → CTA */}
   <Hero />
   <MetricsStrip />
   <ClientsWall />
   <FeaturedWork />
   <Process />
+  <BlogTeaser />
   <CtaSection />
 </BaseLayout>

@@ -42,6 +42,27 @@ const postSchema = {
     : {}),
   keywords: data.tags.join(', '),
 };
+
+// BreadcrumbList: Home > Blog > {post}.
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Blog',
+      item: new URL('/blog', SITE.url).href,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: data.title,
+      item: new URL(`/blog/${post.id}`, SITE.url).href,
+    },
+  ],
+};
 ---
 
 <BaseLayout
@@ -54,6 +75,11 @@ const postSchema = {
   <script
     type="application/ld+json"
     set:html={JSON.stringify(postSchema)}
+    slot="head"
+  />
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(breadcrumbSchema)}
     slot="head"
   />
 
