@@ -15,7 +15,8 @@ interface Props {
   descriptionEs?: string;
   /** Absolute or root-relative path to a 1200×630 share image. */
   image?: string;
-  /** Set true on pages that should not be indexed. */
+  /** Force a page out of the index. Defaults to `!SITE.indexable`, so the whole
+      site is noindex while in preview mode (see SITE.indexable). */
   noindex?: boolean;
   /** Override for OG type, e.g. 'article' on case studies. */
   ogType?: string;
@@ -29,7 +30,7 @@ const {
   description = SITE.description,
   descriptionEs,
   image = SITE.ogImage,
-  noindex = false,
+  noindex = !SITE.indexable,
   ogType = 'website',
   darkChrome = false,
 } = Astro.props;
