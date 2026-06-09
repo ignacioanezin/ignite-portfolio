@@ -32,7 +32,10 @@ const menuLabels = {
 };
 ---
 
-<header class="absolute inset-x-0 top-0 z-50" data-site-header>
+<header
+  class:list={['fixed inset-x-0 top-0 z-50', darkChrome && 'is-dark']}
+  data-site-header
+>
   <div class="container-rail flex items-center justify-between py-5 md:py-7">
     <!-- Logo (left) — proper noun, never translated. -->
     <a

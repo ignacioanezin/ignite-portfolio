@@ -68,7 +68,7 @@ const categories = (Object.keys(CATEGORY_META) as CategoryKey[])
       </p>
     </div>
 
-    <ul class="mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 md:mt-14">
+    <ul class="mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 md:mt-14" data-reveal-group>
       {
         projects.map((project, i) => (
           <li data-work-item data-category={project.data.category}>

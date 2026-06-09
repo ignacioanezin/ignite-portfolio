@@ -97,7 +97,7 @@ const breadcrumbSchema = {
 
     <!-- Header -->
     <header class="mx-auto mt-8 max-w-2xl" data-reveal>
-      <p class="text-xs uppercase tracking-wider text-ink-faint">
+      <p class="tnum text-xs uppercase tracking-wider text-ink-faint">
         <time datetime={data.pubDate.toISOString()}>
           <T
             en={dateFmt(data.pubDate, 'en-US')}
@@ -171,7 +171,7 @@ const breadcrumbSchema = {
         <T k="blog.cta_body" />
       </p>
       <div class="mt-6 flex flex-wrap justify-center gap-4">
-        <a href="/contact" class="btn-ink">
+        <a href="/contact" class="btn-ink" data-magnetic>
           <T k="cta.start" />
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>

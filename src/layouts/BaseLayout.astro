@@ -110,11 +110,18 @@ const personSchema = {
       href="/rss.xml"
     />
 
-    <!-- Preload the single body/display font for first paint.
-         (Add a Switzer preload here too once its woff2 is in /public/fonts.) -->
+    <!-- Preload Switzer's two dominant weights (body 400, medium/headings 500)
+         for first paint. Geist stays the swap fallback; 600/700 load on demand. -->
     <link
       rel="preload"
-      href="/fonts/geist-variable.woff2"
+      href="/fonts/switzer-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/switzer-500.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -218,15 +225,31 @@ const personSchema = {
     <!-- Tasteful static film-grain texture. -->
     <div class="grain-overlay" aria-hidden="true"></div>
 
-    <!-- Scroll-reveal: respects reduced motion, re-runs after transitions. -->
+    <!-- Premium motion + chrome. All reduced-motion safe, idempotent, and
+         re-run after client-side navigations. -->
     <script>
+      const REDUCE = () =>
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Scroll-reveal, with optional staggered children via [data-reveal-group].
       function initReveal() {
-        const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
+        const items =
+          document.querySelectorAll<HTMLElement>('[data-reveal]');
         if (!items.length) return;
-        const reduce = window.matchMedia(
-          '(prefers-reduced-motion: reduce)'
-        ).matches;
-        if (reduce || !('IntersectionObserver' in window)) {
+
+        // Assign incremental delays to grouped children for a choreographed,
+        // slow-camera cascade.
+        document
+          .querySelectorAll<HTMLElement>('[data-reveal-group]')
+          .forEach((group) => {
+            group
+              .querySelectorAll<HTMLElement>('[data-reveal]')
+              .forEach((child, i) => {
+                child.style.setProperty('--reveal-delay', `${i * 0.08}s`);
+              });
+          });
+
+        if (REDUCE() || !('IntersectionObserver' in window)) {
           items.forEach((el) => el.classList.add('is-visible'));
           return;
         }
@@ -243,9 +266,80 @@ const personSchema = {
         );
         items.forEach((el) => io.observe(el));
       }
-      initReveal();
-      // Re-init after each client-side navigation.
-      document.addEventListener('astro:page-load', initReveal);
+
+      // Header condenses to a blurred hairline once scrolled. One window
+      // listener (queries the header fresh, so it survives view transitions).
+      let scrollBound = false;
+      function initScrollHeader() {
+        const apply = () => {
+          const header = document.querySelector('[data-site-header]');
+          if (header) header.toggleAttribute('data-scrolled', window.scrollY > 24);
+        };
+        apply();
+        if (scrollBound) return;
+        scrollBound = true;
+        let ticking = false;
+        window.addEventListener(
+          'scroll',
+          () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+              apply();
+              ticking = false;
+            });
+          },
+          { passive: true }
+        );
+      }
+
+      // Images fade/scale in once decoded (class on the aspect wrapper).
+      function initImgReveal() {
+        document
+          .querySelectorAll<HTMLElement>('[data-img-reveal]')
+          .forEach((wrap) => {
+            if (wrap.dataset.imgBound) return;
+            wrap.dataset.imgBound = 'true';
+            const img = wrap.querySelector('img');
+            const reveal = () => wrap.classList.add('is-loaded');
+            if (!img || img.complete) return reveal();
+            img.addEventListener('load', reveal, { once: true });
+            img.addEventListener('error', reveal, { once: true });
+          });
+      }
+
+      // Subtle magnetic pull on primary CTAs (desktop pointers only).
+      function initMagnetic() {
+        const fine = window.matchMedia(
+          '(hover: hover) and (pointer: fine)'
+        ).matches;
+        if (!fine || REDUCE()) return;
+        document
+          .querySelectorAll<HTMLElement>('[data-magnetic]')
+          .forEach((el) => {
+            if (el.dataset.magBound) return;
+            el.dataset.magBound = 'true';
+            const cap = 6;
+            el.addEventListener('pointermove', (e) => {
+              const r = el.getBoundingClientRect();
+              const x = (e.clientX - (r.left + r.width / 2)) * 0.3;
+              const y = (e.clientY - (r.top + r.height / 2)) * 0.3;
+              el.style.transform = `translate(${Math.max(-cap, Math.min(cap, x))}px, ${Math.max(-cap, Math.min(cap, y))}px)`;
+            });
+            el.addEventListener('pointerleave', () => {
+              el.style.transform = '';
+            });
+          });
+      }
+
+      function initPremium() {
+        initReveal();
+        initScrollHeader();
+        initImgReveal();
+        initMagnetic();
+      }
+      initPremium();
+      document.addEventListener('astro:page-load', initPremium);
     </script>
   </body>
 </html>

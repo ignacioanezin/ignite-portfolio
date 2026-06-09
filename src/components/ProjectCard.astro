@@ -33,6 +33,7 @@ const divider = onDark ? 'border-bone/12' : 'border-line';
   <!-- Aspect box reserved up-front → zero layout shift. On dark the image IS
        the card (no container/ring); photography creates the depth. -->
   <div
+    data-img-reveal
     class:list={[
       'relative aspect-[16/9] overflow-hidden rounded-md',
       onDark
@@ -86,7 +87,7 @@ const divider = onDark ? 'border-bone/12' : 'border-line';
       >
         {data.title}
       </h3>
-      <span class:list={['shrink-0 text-sm', meta]}>{data.year}</span>
+      <span class:list={['tnum shrink-0 text-sm', meta]}>{data.year}</span>
     </div>
     <p class:list={['mt-1.5 text-sm leading-relaxed', excerpt]}>
       <T en={data.excerpt} es={data.excerpt_es ?? data.excerpt} />

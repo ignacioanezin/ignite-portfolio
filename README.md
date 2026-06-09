@@ -119,17 +119,14 @@ export const HERO_MODE = 'reel';
 falls back to the finished portrait hero. The portrait relocates into an intro
 band automatically; nothing else needs editing.
 
-### Add the Switzer font
+### Fonts
 
-The site ships with Geist as the self-hosted fallback. To use Switzer (primary):
-
-1. Download `switzer-variable.woff2` from Fontshare and drop it in
-   `public/fonts/`.
-2. In `src/styles/global.css`, uncomment the `@font-face` block for Switzer.
-3. In `src/layouts/BaseLayout.astro`, add a matching `<link rel="preload">` for
-   the Switzer woff2 (there's a note next to the Geist preload).
-
-The font stack already lists Switzer first, so it takes over once present.
+Switzer (the primary display/body face) is **self-hosted** — static weights
+400/500/600/700 in `public/fonts/switzer-*.woff2`, declared in
+`src/styles/global.css`, with 400/500 preloaded in `BaseLayout.astro`. Geist
+stays as the swap fallback. The stack lists Switzer first, so it's the active
+face. To refresh the files, re-download from
+[Fontshare](https://www.fontshare.com/fonts/switzer) and replace the woff2s.
 
 ### Wire up the contact form
 
