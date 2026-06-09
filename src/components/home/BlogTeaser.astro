@@ -49,11 +49,11 @@ const dateFmt = (d: Date, locale: string) =>
           </a>
         </div>
 
-        <ul class="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        <ul class="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
           {posts.map((post) => (
             <li data-reveal class="border-t border-line pt-5">
               <a href={`/blog/${post.id}`} class="group block">
-                <p class="text-xs uppercase tracking-wider text-ink-faint">
+                <p class="tnum text-xs uppercase tracking-wider text-ink-faint">
                   <time datetime={post.data.pubDate.toISOString()}>
                     <T
                       en={dateFmt(post.data.pubDate, 'en-US')}

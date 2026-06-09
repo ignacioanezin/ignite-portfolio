@@ -43,7 +43,7 @@ const featured = (await getCollection('projects'))
     <!-- Uniform grid: 2 cols desktop / 1 mobile. Desktop shows 4 (a balanced
          2×2); mobile shows 3 — the 4th is hidden so the single column doesn't
          run long. All below the fold → lazy-loaded so the hero owns LCP. -->
-    <div class="grid gap-x-8 gap-y-14 md:grid-cols-2">
+    <div class="grid gap-x-8 gap-y-14 md:grid-cols-2" data-reveal-group>
       {
         featured.map((project, i) => (
           <ProjectCard

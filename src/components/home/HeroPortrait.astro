@@ -49,11 +49,11 @@ const [first, last] = SITE.name.split(' ');
   <div
     class="container-rail relative z-10 flex min-h-[100svh] flex-col pt-32 pb-10 md:justify-center md:pt-0 md:pb-24"
   >
-    <div>
+    <div data-reveal-group>
       <h1
         class="font-display font-medium text-ink"
         style="font-size: var(--text-display); line-height: var(--text-display--line-height); letter-spacing: var(--text-display--letter-spacing);"
-        data-reveal
+        data-reveal="rise"
       >
         <span class="block">{first}</span>
         <span class="block">{last}</span>
@@ -67,13 +67,13 @@ const [first, last] = SITE.name.split(' ');
       </p>
 
       <div class="mt-9 flex flex-wrap items-center gap-4" data-reveal>
-        <a href="/work" class="btn-ink">
+        <a href="/work" class="btn-ink" data-magnetic>
           <T k="hero.cta_work" />
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
-        <a href="/contact" class="btn-ghost"><T k="hero.cta_contact" /></a>
+        <a href="/contact" class="btn-ghost" data-magnetic><T k="hero.cta_contact" /></a>
       </div>
     </div>
   </div>

@@ -67,7 +67,7 @@ const p2Es = `Eso significa que consigo los planos que solo existen a ritmo de c
         </h2>
       </div>
 
-      <div class="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-3">
+      <div class="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-3" data-reveal-group>
         {
           why.map((k) => (
             <div data-reveal class="border-t border-bone/15 pt-5">
@@ -92,7 +92,7 @@ const p2Es = `Eso significa que consigo los planos que solo existen a ritmo de c
       </p>
     </div>
 
-    <ul class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+    <ul class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2" data-reveal-group>
       {
         kit.map((k) => (
           <li data-reveal class="border-t border-line pt-5">
@@ -115,7 +115,7 @@ const p2Es = `Eso significa que consigo los planos que solo existen a ritmo de c
           <T k="about.cta_body" />
         </p>
         <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <a href="/contact" class="btn-bone">
+          <a href="/contact" class="btn-bone" data-magnetic>
             <T k="about.cta_work" />
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
