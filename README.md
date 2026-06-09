@@ -37,10 +37,16 @@ files — you rarely need to touch components.
 
 ## Common tasks
 
+> **Templates:** ready-to-fill starters live in `templates/` —
+> `templates/project.example.md` and `templates/post.example.md`. Copy one into
+> `src/content/projects/` or `src/content/posts/`, rename, and fill the blanks.
+> (Files under `templates/` are outside the content collection, so they never
+> appear on the site.)
+
 ### Add a project
 
-1. Create `src/content/projects/my-project.md`. Copy the frontmatter from an
-   existing file. Required fields (see `src/content.config.ts` for the schema):
+1. Create `src/content/projects/my-project.md` (or copy `templates/project.example.md`).
+   Required fields (see `src/content.config.ts` for the schema):
 
    ```yaml
    ---

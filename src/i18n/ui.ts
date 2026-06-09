@@ -123,6 +123,11 @@ const en: Dict = {
   'blog.meta_desc':
     'Field notes on embedded sports filmmaking — craft, approach, and gear from inside the races.',
 
+  // Home blog teaser
+  'home.blog_eyebrow': 'From the Blog',
+  'home.blog_h2': 'Notes from the field.',
+  'home.blog_all': 'Read the Blog',
+
   // 404
   '404.h1': 'Off the marked route.',
   '404.body':
@@ -333,6 +338,11 @@ const es: Dict = {
   'blog.meta_desc':
     'Apuntes sobre filmación deportiva desde adentro — oficio, enfoque y equipo, desde dentro de las carreras.',
 
+  // Home blog teaser
+  'home.blog_eyebrow': 'Del Blog',
+  'home.blog_h2': 'Apuntes de campo.',
+  'home.blog_all': 'Leer el Blog',
+
   // 404
   '404.h1': 'Fuera del sendero marcado.',
   '404.body':
@@ -439,6 +449,26 @@ const es: Dict = {
 };
 
 export const ui: Record<Lang, Dict> = { en, es };
+
+/**
+ * Build/dev safety guard: EN and ES must define exactly the same keys. This runs
+ * whenever the dictionary is imported (dev server + `astro build`), so a missing
+ * or stray translation fails fast with the exact keys to fix — never shipping a
+ * half-translated string.
+ */
+(() => {
+  const enKeys = Object.keys(en);
+  const esKeys = Object.keys(es);
+  const missingEs = enKeys.filter((k) => !(k in es));
+  const missingEn = esKeys.filter((k) => !(k in en));
+  if (missingEs.length || missingEn.length) {
+    const parts = [
+      missingEs.length ? `missing in ES: ${missingEs.join(', ')}` : '',
+      missingEn.length ? `missing in EN: ${missingEn.join(', ')}` : '',
+    ].filter(Boolean);
+    throw new Error(`[i18n] EN/ES dictionary key mismatch — ${parts.join(' | ')}`);
+  }
+})();
 
 /** Plain-string lookup for the few non-dual-rendered spots (meta, JSON, JS). */
 export function t(lang: Lang, key: string): string {
