@@ -3,49 +3,16 @@
 /* ------------------------------------------------------------------ *
  * Type — ONE neutral grotesque across the whole site (weight/size only).
  *
- * Primary: Switzer (Fontshare, free, self-hosted). Static weights 400/500/600/700
- * subset to woff2 — covers body (400), medium UI/headings (500), and the heavier
- * accents (600/700). Geist remains the fallback while these load (font-display:
- * swap) and for any weight in between.
+ * Primary: Switzer (Fontshare, free, self-hosted). Static weights 400/500/600/700.
+ * Geist is the fallback.
+ *
+ * NOTE: the @font-face declarations are NOT here — they live in a persisted
+ * inline <style> in BaseLayout.astro's <head>. Astro emits per-page CSS bundles,
+ * and if @font-face lived in this (bundled, per-page) file the View Transitions
+ * router would tear it down on every navigation, briefly un-registering the
+ * fonts → a FOUT flash on each click. The persisted head <style> is identical on
+ * every page, so the router keeps it and the fonts never reset.
  * ------------------------------------------------------------------ */
-
-@font-face {
-  font-family: 'Switzer';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url('/fonts/switzer-400.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Switzer';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src: url('/fonts/switzer-500.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Switzer';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 600;
-  src: url('/fonts/switzer-600.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Switzer';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 700;
-  src: url('/fonts/switzer-700.woff2') format('woff2');
-}
-
-/* FALLBACK — Geist (self-hosted variable). */
-@font-face {
-  font-family: 'Geist';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 900;
-  src: url('/fonts/geist-variable.woff2') format('woff2');
-}
 
 /* ------------------------------------------------------------------ *
  * Design tokens (Tailwind v4 lives in CSS via @theme).

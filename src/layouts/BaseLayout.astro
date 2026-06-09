@@ -110,6 +110,47 @@ const personSchema = {
       href="/rss.xml"
     />
 
+    <!-- Font faces live here (inline, identical on every page) rather than in the
+         per-page CSS bundle, so the View Transitions router persists them and the
+         fonts never un-register on navigation (which caused a FOUT on each click). -->
+    <style is:inline>
+      @font-face {
+        font-family: 'Switzer';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url('/fonts/switzer-400.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Switzer';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 500;
+        src: url('/fonts/switzer-500.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Switzer';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 600;
+        src: url('/fonts/switzer-600.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Switzer';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url('/fonts/switzer-700.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Geist';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url('/fonts/geist-variable.woff2') format('woff2');
+      }
+    </style>
+
     <!-- Preload Switzer's two dominant weights (body 400, medium/headings 500)
          for first paint. Geist stays the swap fallback; 600/700 load on demand. -->
     <link
