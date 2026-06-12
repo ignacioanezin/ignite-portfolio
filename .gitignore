@@ -29,3 +29,5 @@ pnpm-debug.log*
 
 # local tooling (per-machine Claude Code config)
 .claude/
+.agents/
+skills-lock.json
