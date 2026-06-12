@@ -77,10 +77,10 @@ export default function WorkFilter({
             type="button"
             aria-pressed={isActive}
             onClick={() => apply(tab.key)}
-            className={`group inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+            className={`group mono-label inline-flex items-center gap-1.5 rounded-full border-2 px-4 py-2 transition-colors ${
               isActive
-                ? 'border-ink bg-ink text-bone'
-                : 'border-line text-ink-dim hover:border-ink/40 hover:text-ink'
+                ? 'border-flare-deep bg-flare-deep text-paper'
+                : 'border-ink text-ink hover:bg-ink hover:text-paper'
             }`}
           >
             <span className="t">
@@ -92,8 +92,8 @@ export default function WorkFilter({
               </span>
             </span>
             <span
-              className={`text-xs tabular-nums ${
-                isActive ? 'text-bone/60' : 'text-ink-faint'
+              className={`tabular-nums ${
+                isActive ? 'text-paper/70' : 'text-ink-faint group-hover:text-paper/70'
               }`}
             >
               {tab.count}

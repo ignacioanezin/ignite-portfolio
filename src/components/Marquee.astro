@@ -1,0 +1,66 @@
+---
+// Marquee — the signature kinetic band. A horizontally-scrolling track of
+// repeated words/phrases, used as the hero understatement and as section
+// dividers. The motion + variants live in global.css (.marquee*); this owns the
+// seamless duplication (two identical tracks so the loop never gaps).
+//
+// Reduced-motion: global.css stops the animation and wraps the items.
+
+interface Props {
+  /** Phrases to run. Repeated across the band. */
+  items: string[];
+  /** Visual fill. `flare` = loud accent band; `ink` = black band; `rule` =
+      paper with top/bottom ink rules (quiet divider). */
+  variant?: 'flare' | 'ink' | 'rule';
+  /** Seconds per loop (smaller = faster). */
+  speed?: number;
+  /** Reverse the scroll direction. */
+  reverse?: boolean;
+  /** Vertical padding scale. */
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const {
+  items,
+  variant = 'flare',
+  speed = 30,
+  reverse = false,
+  size = 'md',
+  class: className,
+} = Astro.props;
+
+const fill =
+  variant === 'flare'
+    ? 'marquee-flare'
+    : variant === 'ink'
+      ? 'marquee-ink'
+      : 'border-y-2 border-ink text-ink';
+
+const pad = size === 'lg' ? 'py-6 md:py-8' : size === 'sm' ? 'py-2.5' : 'py-4 md:py-5';
+
+// Star/asterisk separator between phrases, in a contrasting tone.
+const sepClass = variant === 'rule' ? 'text-flare' : 'opacity-60';
+---
+
+<div
+  class:list={['marquee', fill, pad, className]}
+  data-reverse={reverse ? '' : undefined}
+  style={`--marquee-speed:${speed}s`}
+  aria-hidden="true"
+>
+  {
+    [0, 1].map(() => (
+      <ul class="marquee-track">
+        {items.map((item) => (
+          <li class="flex items-center gap-[var(--marquee-gap,2.5rem)]">
+            <span class="font-display text-2xl font-bold uppercase tracking-tight md:text-3xl">
+              {item}
+            </span>
+            <span class={`font-display text-2xl md:text-3xl ${sepClass}`}>✳</span>
+          </li>
+        ))}
+      </ul>
+    ))
+  }
+</div>

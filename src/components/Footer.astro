@@ -4,33 +4,33 @@ import T from '@/components/T.astro';
 const year = new Date().getFullYear();
 ---
 
-<!-- DARK — flows out of the dark CTA so the page ends cohesively. -->
-<footer class="border-t border-bone/10 bg-ink text-bone">
-  <div class="container-rail py-14 md:py-20">
+<!-- Bold ink field — closes the page hard after the flare CTA. -->
+<footer class="bg-ink text-paper">
+  <div class="container-rail py-16 md:py-24">
     <div class="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
       <!-- Brand + pitch -->
       <div>
-        <p class="font-display text-2xl font-medium tracking-tight text-bone">
+        <p class="font-display text-3xl font-bold uppercase tracking-tight md:text-4xl">
           {SITE.name}
         </p>
-        <p class="mt-3 max-w-xs text-sm leading-relaxed text-bone-dim">
+        <p class="mt-4 max-w-xs leading-relaxed text-paper/70">
           <T k="site.statement" />
         </p>
-        <p class="mt-4 text-sm text-bone-faint">
+        <p class="mono-label mt-5 text-paper/50">
           {SITE.baseLocation} · {SITE.shootingRegion}
         </p>
       </div>
 
       <!-- Nav -->
       <nav aria-label="Footer">
-        <p class="eyebrow mb-4 text-bone-faint"><T k="footer.site" /></p>
+        <p class="mono-label mb-4 text-flare"><T k="footer.site" /></p>
         <ul class="space-y-2.5">
           {
             NAV_LINKS.map((link) => (
               <li>
                 <a
                   href={link.href}
-                  class="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
+                  class="link-underline text-paper/80 transition-colors hover:text-paper"
                 >
                   <T k={link.key} />
                 </a>
@@ -40,7 +40,7 @@ const year = new Date().getFullYear();
           <li>
             <a
               href="/blog"
-              class="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
+              class="link-underline text-paper/80 transition-colors hover:text-paper"
             >
               <T k="nav.blog" />
             </a>
@@ -50,12 +50,12 @@ const year = new Date().getFullYear();
 
       <!-- Contact -->
       <div>
-        <p class="eyebrow mb-4 text-bone-faint"><T k="footer.getintouch" /></p>
+        <p class="mono-label mb-4 text-flare"><T k="footer.getintouch" /></p>
         <ul class="space-y-2.5">
           <li>
             <a
               href={`mailto:${SITE.email}`}
-              class="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
+              class="link-underline text-paper/80 transition-colors hover:text-paper"
             >
               {SITE.email}
             </a>
@@ -65,7 +65,7 @@ const year = new Date().getFullYear();
               href={SITE.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              class="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
+              class="link-underline text-paper/80 transition-colors hover:text-paper"
             >
               Instagram {SITE.social.instagramHandle}
             </a>
@@ -75,7 +75,7 @@ const year = new Date().getFullYear();
     </div>
 
     <div
-      class="mt-14 flex flex-col gap-2 border-t border-bone/10 pt-6 text-xs text-bone-faint sm:flex-row sm:items-center sm:justify-between"
+      class="mono-label mt-14 flex flex-col gap-2 border-t border-paper/15 pt-6 text-paper/50 sm:flex-row sm:items-center sm:justify-between"
     >
       <p>© {year} {SITE.name}. <T k="footer.rights" /></p>
       <p><T k="footer.tagline2" /> · {SITE.shootingRegion}</p>

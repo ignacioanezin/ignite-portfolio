@@ -6,7 +6,7 @@ import LangToggle from '@/components/LangToggle.astro';
 import MobileNav from '@/components/react/MobileNav.tsx';
 
 interface Props {
-  /** True when the nav sits over a dark surface (reel-mode hero). */
+  /** Retained for API compatibility (reel hero). The canvas is light. */
   darkChrome?: boolean;
 }
 const { darkChrome = false } = Astro.props;
@@ -14,9 +14,6 @@ const { darkChrome = false } = Astro.props;
 const path = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
-
-// Adaptive foreground: ink on the light brand, bone over a dark reel hero.
-const fg = darkChrome ? 'text-bone' : 'text-ink';
 
 // Bilingual labels for the React mobile menu (rendered as dual spans there).
 const navLinks = NAV_LINKS.map((l) => ({
@@ -33,17 +30,14 @@ const menuLabels = {
 ---
 
 <header
-  class:list={['fixed inset-x-0 top-0 z-50', darkChrome && 'is-dark']}
+  class:list={['fixed inset-x-0 top-0 z-50 text-ink', darkChrome && 'is-dark']}
   data-site-header
 >
   <div class="container-rail flex items-center justify-between py-5 md:py-7">
     <!-- Logo (left) — proper noun, never translated. -->
     <a
       href="/"
-      class:list={[
-        'text-base font-medium tracking-tight transition-opacity hover:opacity-70',
-        fg,
-      ]}
+      class="font-display text-lg font-bold uppercase tracking-tight transition-opacity hover:opacity-70"
       aria-label={`${SITE.name} — home`}
     >
       {SITE.name}
@@ -53,15 +47,10 @@ const menuLabels = {
     <div class="hidden items-center gap-7 md:flex">
       {
         SITE.availability && (
-          <span
-            class:list={[
-              'flex items-center gap-2 text-xs font-medium',
-              darkChrome ? 'text-signal-soft' : 'text-signal',
-            ]}
-          >
+          <span class="mono-label flex items-center gap-2 text-ink-faint">
             <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
-              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60" />
-              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-flare opacity-60" />
+              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-flare" />
             </span>
             <T k="nav.availability" />
           </span>
@@ -69,7 +58,7 @@ const menuLabels = {
       }
 
       <nav aria-label="Primary">
-        <ul class="flex items-center gap-7">
+        <ul class="flex items-center gap-6">
           {
             NAV_LINKS.map((link) => (
               <li>
@@ -77,9 +66,10 @@ const menuLabels = {
                   href={link.href}
                   aria-current={isActive(link.href) ? 'page' : undefined}
                   class:list={[
-                    'link-underline text-sm font-medium tracking-wide transition-opacity',
-                    fg,
-                    isActive(link.href) ? 'opacity-100' : 'opacity-70 hover:opacity-100',
+                    'mono-label transition-colors',
+                    isActive(link.href)
+                      ? 'text-flare'
+                      : 'text-ink hover:text-flare',
                   ]}
                 >
                   <T k={link.key} />
@@ -94,7 +84,7 @@ const menuLabels = {
     </div>
 
     <!-- Mobile: language toggle + hamburger -->
-    <div class:list={['flex items-center gap-4 md:hidden', fg]}>
+    <div class="flex items-center gap-4 text-ink md:hidden">
       <LangToggle darkChrome={darkChrome} />
       <MobileNav
         links={navLinks}

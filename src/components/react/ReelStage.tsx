@@ -41,7 +41,7 @@ export default function ReelStage({ vimeoId }: Props) {
           type="button"
           onClick={() => setMuted((m) => !m)}
           aria-pressed={!muted}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-bone/40 text-bone backdrop-blur-sm transition-colors hover:border-bone"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-paper backdrop-blur-sm transition-colors hover:border-paper"
           aria-label={muted ? 'Unmute reel' : 'Mute reel'}
         >
           {muted ? (
@@ -58,7 +58,7 @@ export default function ReelStage({ vimeoId }: Props) {
         </button>
 
         {/* The button + modal for full-sound playback. */}
-        <div className="[&_.btn-ghost]:border-bone/40 [&_.btn-ghost]:text-bone hover:[&_.btn-ghost]:bg-bone hover:[&_.btn-ghost]:text-ink">
+        <div className="[&_.btn-ghost]:border-paper/40 [&_.btn-ghost]:text-paper hover:[&_.btn-ghost]:bg-paper hover:[&_.btn-ghost]:text-ink">
           <ReelLightbox vimeoId={vimeoId} />
         </div>
       </div>

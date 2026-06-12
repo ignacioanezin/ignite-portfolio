@@ -1,58 +1,46 @@
 ---
 import { getCollection } from 'astro:content';
-import ProjectCard from '@/components/ProjectCard.astro';
+import WorkRow from '@/components/WorkRow.astro';
 import T from '@/components/T.astro';
 
 const featured = (await getCollection('projects'))
   .filter((p) => p.data.featured)
   .sort((a, b) => b.data.year - a.data.year)
   .slice(0, 4);
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<!-- DARK — continuous with the Proof zone above. Project imagery is the source
-     of contrast; the section reads as the cinematic centerpiece. -->
-<section aria-label="Selected work" class="bg-ink text-bone">
+<!-- Selected work as a bold "start list". -->
+<section aria-label="Selected work">
   <div class="container-rail py-20 md:py-28">
     <div class="mb-12 flex flex-wrap items-end justify-between gap-6" data-reveal>
       <div>
-        <p class="eyebrow mb-3 text-bone-faint"><T k="featured.eyebrow" /></p>
-        <h2 class="max-w-2xl text-4xl font-medium tracking-tight md:text-5xl">
+        <p class="eyebrow eyebrow-tick mb-4"><T k="featured.eyebrow" /></p>
+        <h2 class="max-w-3xl text-4xl font-bold uppercase leading-[0.95] tracking-tight md:text-6xl">
           <T k="featured.h2" />
         </h2>
       </div>
       <a
         href="/work"
-        class="group inline-flex items-center gap-2 text-sm font-medium text-bone-dim transition-colors hover:text-bone"
+        class="group mono-label inline-flex items-center gap-2 text-flare transition-opacity hover:opacity-70"
       >
         <T k="featured.all" />
         <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.6"
-          aria-hidden="true"
-          class="transition-transform group-hover:translate-x-1"
+          width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+          aria-hidden="true" class="transition-transform group-hover:translate-x-1"
         >
           <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
       </a>
     </div>
 
-    <!-- Uniform grid: 2 cols desktop / 1 mobile. Desktop shows 4 (a balanced
-         2×2); mobile shows 3 — the 4th is hidden so the single column doesn't
-         run long. All below the fold → lazy-loaded so the hero owns LCP. -->
-    <div class="grid gap-x-8 gap-y-14 md:grid-cols-2" data-reveal-group>
-      {
-        featured.map((project, i) => (
-          <ProjectCard
-            project={project}
-            onDark
-            class={i === 3 ? 'hidden md:block' : undefined}
-          />
-        ))
-      }
+    <div data-reveal-group>
+      {featured.map((project, i) => (
+        <WorkRow project={project} index={pad(i + 1)} priority={i < 2} />
+      ))}
+      <!-- Close the list with the final rule. -->
+      <div class="border-t-2 border-ink"></div>
     </div>
   </div>
 </section>

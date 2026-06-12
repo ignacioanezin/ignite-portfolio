@@ -9,11 +9,10 @@
  * override + active state.
  */
 interface Props {
-  /** Bone tones over a dark reel hero; ink tones on the light brand. */
+  /** Retained for API compatibility — the canvas is dark everywhere now. */
   darkChrome?: boolean;
 }
-const { darkChrome = false } = Astro.props;
-const base = darkChrome ? 'text-bone' : 'text-ink';
+const base = 'text-ink';
 ---
 
 <div

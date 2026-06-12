@@ -5,20 +5,20 @@ import { METRICS, hasMetrics } from '@/data/metrics';
 
 {
   hasMetrics && (
-    <section aria-label="Proof in numbers" class="bg-ink text-bone">
-      <div class="container-rail py-12 md:py-16">
+    <section aria-label="Proof in numbers" class="border-y-2 border-ink">
+      <div class="container-rail py-14 md:py-20">
         <dl
-          class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4"
+          class="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4"
           data-reveal
         >
           {METRICS.map((m) => (
-            <div class="text-center md:text-left">
+            <div>
               <dt class="sr-only">{m.label}</dt>
               <dd>
-                <span class="block font-display text-4xl font-medium tracking-tight text-bone md:text-5xl">
+                <span class="mono tnum block text-5xl font-bold tracking-tight text-flare md:text-7xl">
                   {m.value}
                 </span>
-                <span class="mt-1 block text-sm text-bone-dim">{m.label}</span>
+                <span class="mono-label mt-2 block text-ink-faint">{m.label}</span>
               </dd>
             </div>
           ))}

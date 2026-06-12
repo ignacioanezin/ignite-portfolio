@@ -7,10 +7,7 @@ import { SITE } from '@/lib/site';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 
 const { post } = Astro.props;
@@ -18,43 +15,28 @@ const { data } = post;
 const { Content } = await render(post);
 
 const dateFmt = (d: Date, locale: string) =>
-  d.toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  d.toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
 
-// BlogPosting JSON-LD for rich results.
 const postSchema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
   headline: data.title,
   description: data.description,
   datePublished: data.pubDate.toISOString(),
-  ...(data.updatedDate
-    ? { dateModified: data.updatedDate.toISOString() }
-    : {}),
+  ...(data.updatedDate ? { dateModified: data.updatedDate.toISOString() } : {}),
   author: { '@type': 'Person', name: SITE.name, url: SITE.url },
   publisher: { '@type': 'Person', name: SITE.name },
   mainEntityOfPage: new URL(`/blog/${post.id}`, SITE.url).href,
-  ...(data.heroImage
-    ? { image: new URL(data.heroImage.src, SITE.url).href }
-    : {}),
+  ...(data.heroImage ? { image: new URL(data.heroImage.src, SITE.url).href } : {}),
   keywords: data.tags.join(', '),
 };
 
-// BreadcrumbList: Home > Blog > {post}.
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: 'Blog',
-      item: new URL('/blog', SITE.url).href,
-    },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: new URL('/blog', SITE.url).href },
     {
       '@type': 'ListItem',
       position: 3,
@@ -72,24 +54,16 @@ const breadcrumbSchema = {
   descriptionEs={data.description_es ?? data.description}
   ogType="article"
 >
-  <script
-    type="application/ld+json"
-    set:html={JSON.stringify(postSchema)}
-    slot="head"
-  />
-  <script
-    type="application/ld+json"
-    set:html={JSON.stringify(breadcrumbSchema)}
-    slot="head"
-  />
+  <script type="application/ld+json" set:html={JSON.stringify(postSchema)} slot="head" />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} slot="head" />
 
   <article class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
     <a
       href="/blog"
-      class="group inline-flex items-center gap-2 text-sm font-medium text-ink-dim transition-colors hover:text-ink"
+      class="group mono-label inline-flex items-center gap-2 text-flare transition-opacity hover:opacity-70"
       data-reveal
     >
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" class="transition-transform group-hover:-translate-x-1">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="transition-transform group-hover:-translate-x-1">
         <path d="M13 8H3M7 4L3 8l4 4" stroke-linecap="round" stroke-linejoin="round"></path>
       </svg>
       <T k="blog.back" />
@@ -97,29 +71,21 @@ const breadcrumbSchema = {
 
     <!-- Header -->
     <header class="mx-auto mt-8 max-w-2xl" data-reveal>
-      <p class="tnum text-xs uppercase tracking-wider text-ink-faint">
+      <p class="mono-label tnum text-flare">
         <time datetime={data.pubDate.toISOString()}>
-          <T
-            en={dateFmt(data.pubDate, 'en-US')}
-            es={dateFmt(data.pubDate, 'es-AR')}
-          />
+          <T en={dateFmt(data.pubDate, 'en-US')} es={dateFmt(data.pubDate, 'es-AR')} />
         </time>
         {
           data.updatedDate && (
             <span>
               {' · '}
               <T k="blog.updated" />{' '}
-              <T
-                en={dateFmt(data.updatedDate, 'en-US')}
-                es={dateFmt(data.updatedDate, 'es-AR')}
-              />
+              <T en={dateFmt(data.updatedDate, 'en-US')} es={dateFmt(data.updatedDate, 'es-AR')} />
             </span>
           )
         }
       </p>
-      <h1
-        class="mt-4 font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-5xl"
-      >
+      <h1 class="mt-4 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight md:text-6xl">
         <T en={data.title} es={data.title_es ?? data.title} />
       </h1>
       <p class="mt-5 text-xl leading-snug text-ink-dim">
@@ -136,7 +102,7 @@ const breadcrumbSchema = {
             widths={[640, 1024, 1600]}
             sizes="(min-width: 1024px) 56rem, 100vw"
             loading="eager"
-            class="w-full rounded-xl"
+            class="w-full border-2 border-ink"
           />
         </div>
       )
@@ -151,7 +117,7 @@ const breadcrumbSchema = {
       data.tags.length > 0 && (
         <ul class="mx-auto mt-12 flex max-w-2xl flex-wrap gap-2" data-reveal>
           {data.tags.map((tag) => (
-            <li class="rounded-full border border-line px-3 py-1 text-xs uppercase tracking-wider text-ink-faint">
+            <li class="mono-label rounded-full border-2 border-ink px-3 py-1 text-ink">
               {tag}
             </li>
           ))}
@@ -160,11 +126,8 @@ const breadcrumbSchema = {
     }
 
     <!-- CTA -->
-    <div
-      class="mx-auto mt-14 max-w-2xl border-t border-line pt-10 text-center"
-      data-reveal
-    >
-      <h2 class="text-2xl font-medium tracking-tight md:text-3xl">
+    <div class="mx-auto mt-14 max-w-2xl border-t-2 border-ink pt-10 text-center" data-reveal>
+      <h2 class="text-3xl font-bold uppercase leading-[0.95] tracking-tight md:text-4xl">
         <T k="blog.cta_h2" />
       </h2>
       <p class="mx-auto mt-3 max-w-md text-ink-dim">
@@ -173,7 +136,7 @@ const breadcrumbSchema = {
       <div class="mt-6 flex flex-wrap justify-center gap-4">
         <a href="/contact" class="btn-ink" data-magnetic>
           <T k="cta.start" />
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
@@ -184,7 +147,7 @@ const breadcrumbSchema = {
 </BaseLayout>
 
 <style>
-  /* Self-contained prose — no typography plugin. Tuned to the design tokens. */
+  /* Self-contained prose — no typography plugin. Tuned to the tokens. */
   .post-prose {
     font-size: 1.075rem;
     line-height: 1.75;
@@ -195,15 +158,16 @@ const breadcrumbSchema = {
   }
   .post-prose :global(h2) {
     margin-block: 2em 0.6em;
-    font-size: 1.6rem;
-    font-weight: 500;
+    font-size: 1.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
     letter-spacing: -0.02em;
     color: var(--color-ink);
   }
   .post-prose :global(h3) {
     margin-block: 1.6em 0.5em;
     font-size: 1.25rem;
-    font-weight: 500;
+    font-weight: 700;
     color: var(--color-ink);
   }
   .post-prose :global(ul),
@@ -222,7 +186,7 @@ const breadcrumbSchema = {
     padding-left: 0.25em;
   }
   .post-prose :global(li::marker) {
-    color: var(--color-ink-faint);
+    color: var(--color-flare);
   }
   .post-prose :global(strong) {
     color: var(--color-ink);
@@ -231,13 +195,14 @@ const breadcrumbSchema = {
   .post-prose :global(a) {
     color: var(--color-ink);
     text-decoration: underline;
+    text-decoration-color: var(--color-flare);
     text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
+    text-decoration-thickness: 2px;
   }
   .post-prose :global(blockquote) {
     margin-block: 1.5em;
     padding-left: 1.1em;
-    border-left: 2px solid var(--color-line);
+    border-left: 3px solid var(--color-flare);
     font-style: italic;
     color: var(--color-ink);
   }

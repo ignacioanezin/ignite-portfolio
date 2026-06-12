@@ -81,7 +81,7 @@ const personSchema = {
 ---
 
 <!doctype html>
-<html lang="en" class="bg-bone">
+<html lang="en" class="bg-paper">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -92,7 +92,7 @@ const personSchema = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#e9e8e3" />
+    <meta name="theme-color" content="#f3f1ea" />
 
     <!-- Bilingual title/description payload for the language layer. -->
     <script
@@ -149,6 +149,15 @@ const personSchema = {
         font-weight: 100 900;
         src: url('/fonts/geist-variable.woff2') format('woff2');
       }
+      /* Geist Mono — the sport-data voice (bib numbers, splits, eyebrows, meta).
+         Variable weight; from the already-installed `geist` package. */
+      @font-face {
+        font-family: 'Geist Mono';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url('/fonts/geist-mono-variable.woff2') format('woff2');
+      }
     </style>
 
     <!-- Preload Switzer's two dominant weights (body 400, medium/headings 500)
@@ -163,6 +172,14 @@ const personSchema = {
     <link
       rel="preload"
       href="/fonts/switzer-500.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <!-- Geist Mono drives eyebrows + the bold mono numerals → preload it too. -->
+    <link
+      rel="preload"
+      href="/fonts/geist-mono-variable.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -250,10 +267,15 @@ const personSchema = {
   <body class="min-h-screen antialiased">
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-bone"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-paper"
     >
       Skip to content
     </a>
+
+    <!-- Flare scroll-progress line — tracks page progress. Persisted so it
+         doesn't flash/reset across view transitions. -->
+    <div class="playhead" aria-hidden="true" data-playhead transition:persist>
+    </div>
 
     <Nav darkChrome={darkChrome} />
 
@@ -308,13 +330,20 @@ const personSchema = {
         items.forEach((el) => io.observe(el));
       }
 
-      // Header condenses to a blurred hairline once scrolled. One window
-      // listener (queries the header fresh, so it survives view transitions).
+      // Header condenses to a blurred hairline once scrolled, and the ember
+      // scroll-playhead tracks page progress. One window listener (queries the
+      // nodes fresh, so it survives view transitions).
       let scrollBound = false;
-      function initScrollHeader() {
+      function initScrollChrome() {
         const apply = () => {
           const header = document.querySelector('[data-site-header]');
           if (header) header.toggleAttribute('data-scrolled', window.scrollY > 24);
+          const playhead = document.querySelector<HTMLElement>('[data-playhead]');
+          if (playhead) {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+            playhead.style.setProperty('--playhead', String(progress));
+          }
         };
         apply();
         if (scrollBound) return;
@@ -375,7 +404,7 @@ const personSchema = {
 
       function initPremium() {
         initReveal();
-        initScrollHeader();
+        initScrollChrome();
         initImgReveal();
         initMagnetic();
       }

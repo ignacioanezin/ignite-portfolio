@@ -24,6 +24,14 @@ const projects = defineCollection({
       previewClip: z.string().optional(), // muted hover loop (mp4/webm) in /public
       excerpt: z.string(), // one strategic line for the grid
 
+      // Film-slate metadata (optional → renders only when present, honesty rule).
+      // tcIn/tcOut are the piece's stylised in/out timecodes; lens + elevationGain
+      // (D+ vertical) are production facts. Leave blank where unknown.
+      tcIn: z.string().optional(), // e.g. "00:00:00:00"
+      tcOut: z.string().optional(), // e.g. "00:05:12:08"
+      lens: z.string().optional(), // e.g. "24mm · 50mm"
+      elevationGain: z.string().optional(), // e.g. "2,400 m"
+
       // Case-study body.
       challenge: z.string(), // the client's problem
       strategy: z.string(), // the creative approach

@@ -78,7 +78,7 @@ export const heroIsReel =
  *  - 'slider' : slow seamless pause-on-hover marquee. Respects
  *               prefers-reduced-motion (falls back to the wall). Worth it 10+.
  */
-export const CLIENTS_DISPLAY: 'wall' | 'slider' = 'wall';
+export const CLIENTS_DISPLAY: 'wall' | 'slider' = 'slider';
 
 /** Four-item nav — order matters. `key` resolves the label via the i18n dict. */
 export const NAV_LINKS = [
