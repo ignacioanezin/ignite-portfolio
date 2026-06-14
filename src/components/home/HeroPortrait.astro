@@ -30,34 +30,16 @@ const manifestoEs = [
   class="relative flex min-h-[100svh] flex-col overflow-hidden"
   aria-label="Introduction"
 >
-  <!-- Subject — full-contrast B&W, bleeds off the bottom-right. -->
-  <div
-    class="pointer-events-none relative z-0 w-full h-[52vh] -mb-[4rem]
-           sm:h-[56vh]
-           md:absolute md:bottom-[4.75rem] md:left-auto md:right-[6%] md:h-[68vh] md:w-[44%] md:translate-x-0
-           lg:right-[8%] lg:max-w-xl"
-  >
-    <Image
-      src={portrait}
-      alt={`${SITE.name}, athlete-filmmaker`}
-      widths={[480, 768, 1100]}
-      sizes="(min-width: 768px) 52vw, 100vw"
-      loading="eager"
-      fetchpriority="high"
-      class="h-full w-auto max-w-none object-contain object-bottom"
-    />
-  </div>
-
-  <!-- Legibility wash on the type side. -->
+  <!-- Legibility wash on the type side (desktop only). -->
   <div
     class="pointer-events-none absolute inset-0 z-[1] hidden bg-gradient-to-r from-paper from-30% via-paper/80 to-transparent to-70% md:block"
     aria-hidden="true"
   >
   </div>
 
-  <!-- Type wall. -->
+  <!-- Type wall — first in DOM so it renders above the portrait on mobile. -->
   <div
-    class="container-rail relative z-10 flex flex-1 flex-col justify-center pt-24 pb-4 md:pt-0 md:pb-44"
+    class="container-rail relative z-10 flex flex-col pt-24 pb-4 md:flex-1 md:justify-center md:pt-0 md:pb-44"
   >
     <div data-reveal-group>
       <p class="eyebrow eyebrow-tick mb-6" data-reveal>
@@ -92,6 +74,26 @@ const manifestoEs = [
         <a href="/contact" class="btn-ghost" data-magnetic><T k="hero.cta_contact" /></a>
       </div>
     </div>
+  </div>
+
+  <!-- Subject — full-contrast B&W. Flows after text on mobile; absolute on desktop. -->
+  <div
+    data-reveal
+    style="--reveal-delay: 0.35s"
+    class="pointer-events-none relative z-0 w-full h-[52vh] pb-16
+           sm:h-[56vh]
+           md:absolute md:bottom-[4.75rem] md:left-auto md:right-[6%] md:h-[68vh] md:w-[44%] md:translate-x-0 md:pb-0
+           lg:right-[8%] lg:max-w-xl"
+  >
+    <Image
+      src={portrait}
+      alt={`${SITE.name}, athlete-filmmaker`}
+      widths={[480, 768, 1100]}
+      sizes="(min-width: 768px) 52vw, 100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="h-full w-auto max-w-none object-contain object-bottom"
+    />
   </div>
 
   <!-- Manifesto marquee — the kinetic signature. -->

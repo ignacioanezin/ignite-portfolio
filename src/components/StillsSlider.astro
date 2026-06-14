@@ -1,0 +1,95 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  images: ImageMetadata[];
+  title: string;
+}
+
+const { images, title } = Astro.props;
+
+// Stills shown as a large horizontal reel (scroll-snap slider) rather than a
+// small grid — each still keeps its real orientation at a tall fixed height, so
+// landscape + portrait read like a contact sheet. Native swipe/scroll on touch;
+// arrow buttons scroll a viewport on desktop. Reduced-motion is handled globally
+// (scroll-behavior forced to auto), so no JS gating needed for the smooth scroll.
+---
+
+<div class="stills-slider relative" data-reveal>
+  <ul
+    class="stills-track flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 md:gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+  >
+    {
+      images.map((img, i) => (
+        <li class="snap-start shrink-0">
+          <Image
+            src={img}
+            alt={`${title} — still ${i + 1}`}
+            widths={[480, 800, 1200, 1600]}
+            sizes="(min-width: 1024px) 55vw, 85vw"
+            loading="lazy"
+            class="h-[340px] w-auto object-cover sm:h-[440px] lg:h-[560px]"
+          />
+        </li>
+      ))
+    }
+  </ul>
+
+  <!-- Desktop scroll controls (touch users swipe). -->
+  <button
+    type="button"
+    class="stills-prev absolute left-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-ink/80 text-paper shadow-lg backdrop-blur-sm transition-colors hover:bg-flare md:flex"
+    aria-label="Previous stills"
+  >
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M10 3L5 8l5 5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+  <button
+    type="button"
+    class="stills-next absolute right-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-ink/80 text-paper shadow-lg backdrop-blur-sm transition-colors hover:bg-flare md:flex"
+    aria-label="More stills"
+  >
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M6 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+</div>
+
+<script>
+  // Arrow buttons scroll the reel by ~80% of its visible width. Bind once,
+  // re-run after Astro view transitions (same pattern as the video facade).
+  function initStillsSliders() {
+    document
+      .querySelectorAll<HTMLElement>('.stills-slider')
+      .forEach((slider) => {
+        if (slider.dataset.bound) return;
+        slider.dataset.bound = 'true';
+        const track = slider.querySelector<HTMLElement>('.stills-track');
+        const prev = slider.querySelector<HTMLButtonElement>('.stills-prev');
+        const next = slider.querySelector<HTMLButtonElement>('.stills-next');
+        if (!track) return;
+
+        const step = () => Math.round(track.clientWidth * 0.8);
+        prev?.addEventListener('click', () =>
+          track.scrollBy({ left: -step(), behavior: 'smooth' })
+        );
+        next?.addEventListener('click', () =>
+          track.scrollBy({ left: step(), behavior: 'smooth' })
+        );
+
+        // Dim a control when there's nothing further to scroll that way.
+        const sync = () => {
+          const max = track.scrollWidth - track.clientWidth - 1;
+          if (prev) prev.style.opacity = track.scrollLeft <= 0 ? '0.35' : '1';
+          if (next)
+            next.style.opacity = track.scrollLeft >= max ? '0.35' : '1';
+        };
+        track.addEventListener('scroll', sync, { passive: true });
+        sync();
+      });
+  }
+  initStillsSliders();
+  document.addEventListener('astro:page-load', initStillsSliders);
+</script>

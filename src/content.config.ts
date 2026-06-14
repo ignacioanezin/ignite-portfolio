@@ -49,6 +49,20 @@ const projects = defineCollection({
       result_es: z.string().optional(),
       deliverables_es: z.array(z.string()).optional(),
 
+      // Vertical social cutdowns (9:16). Optional → render only when present
+      // (honesty). Each is a YouTube/Shorts id + a local poster still, shown as
+      // a click-to-play lite-embed like the main film.
+      verticals: z
+        .array(
+          z.object({
+            youtubeId: z.string(),
+            poster: image(),
+            caption: z.string().optional(),
+            caption_es: z.string().optional(),
+          })
+        )
+        .optional(),
+
       gallery: z.array(image()).optional(),
       featured: z.boolean().default(false),
       tags: z.array(z.string()).optional(),

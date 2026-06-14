@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import WorkRow from '@/components/WorkRow.astro';
+import WorkPoster from '@/components/WorkPoster.astro';
 import WorkFilter from '@/components/react/WorkFilter.tsx';
 import T from '@/components/T.astro';
 import { CATEGORY_META, type CategoryKey } from '@/content.config';
@@ -64,16 +64,18 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <p id="work-filter-status" class="sr-only" role="status" aria-live="polite"></p>
     </div>
 
-    <!-- Start list -->
-    <div class="mt-10 md:mt-14" data-reveal-group>
+    <!-- Poster grid — large stills lead; the filter toggles `.hidden` per item. -->
+    <div
+      class="mt-10 grid grid-cols-1 gap-6 md:mt-14 md:grid-cols-2 md:gap-8"
+      data-reveal-group
+    >
       {
         projects.map((project, i) => (
           <div data-work-item data-category={project.data.category}>
-            <WorkRow project={project} index={pad(i + 1)} priority={i < 2} />
+            <WorkPoster project={project} index={pad(i + 1)} priority={i < 2} />
           </div>
         ))
       }
-      <div class="border-t-2 border-ink"></div>
     </div>
   </section>
 </BaseLayout>

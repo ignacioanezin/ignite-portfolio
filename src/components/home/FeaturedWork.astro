@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import WorkRow from '@/components/WorkRow.astro';
+import WorkPoster from '@/components/WorkPoster.astro';
 import T from '@/components/T.astro';
 
 const featured = (await getCollection('projects'))
@@ -11,7 +11,7 @@ const featured = (await getCollection('projects'))
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<!-- Selected work as a bold "start list". -->
+<!-- Selected work as a bold poster grid — the footage leads. -->
 <section aria-label="Selected work">
   <div class="container-rail py-20 md:py-28">
     <div class="mb-12 flex flex-wrap items-end justify-between gap-6" data-reveal>
@@ -35,12 +35,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </a>
     </div>
 
-    <div data-reveal-group>
+    <div
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8"
+      data-reveal-group
+    >
       {featured.map((project, i) => (
-        <WorkRow project={project} index={pad(i + 1)} priority={i < 2} />
+        <WorkPoster project={project} index={pad(i + 1)} priority={i < 2} />
       ))}
-      <!-- Close the list with the final rule. -->
-      <div class="border-t-2 border-ink"></div>
     </div>
   </div>
 </section>

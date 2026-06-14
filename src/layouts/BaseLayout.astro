@@ -402,11 +402,36 @@ const personSchema = {
           });
       }
 
+      // Poster cards: cross-fade the still to a muted preview loop on hover.
+      // Desktop pointers only, and never under reduced motion (still stays).
+      function initHoverVideo() {
+        const fine = window.matchMedia(
+          '(hover: hover) and (pointer: fine)'
+        ).matches;
+        if (!fine || REDUCE()) return;
+        document
+          .querySelectorAll<HTMLElement>('[data-hover-video]')
+          .forEach((frame) => {
+            if (frame.dataset.videoBound) return;
+            frame.dataset.videoBound = 'true';
+            const video = frame.querySelector('video');
+            if (!video) return;
+            frame.addEventListener('pointerenter', () => {
+              video.play().catch(() => {});
+            });
+            frame.addEventListener('pointerleave', () => {
+              video.pause();
+              video.currentTime = 0;
+            });
+          });
+      }
+
       function initPremium() {
         initReveal();
         initScrollChrome();
         initImgReveal();
         initMagnetic();
+        initHoverVideo();
       }
       initPremium();
       document.addEventListener('astro:page-load', initPremium);

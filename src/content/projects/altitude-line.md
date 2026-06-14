@@ -25,6 +25,26 @@ deliverables:
 result: "The organic hero film drove more launch-week engagement than the brand's paid creative, and the shell sold through its first production run ahead of forecast. Cumbre moved their following launch to the same embedded approach."
 featured: true
 tags: ["product", "apparel", "altitude"]
+# Demo assets (reuse existing stills as placeholders) — replace with real
+# vertical YouTube/Shorts ids + posters and real gallery stills.
+verticals:
+  - youtubeId: "ScMzIvxBSi4"
+    poster: "../../assets/projects/altitude-line.jpg"
+    caption: "9:16 product cutdown"
+    caption_es: "Corte vertical de producto"
+  - youtubeId: "ScMzIvxBSi4"
+    poster: "../../assets/projects/the-long-way.jpg"
+    caption: "Athlete teaser"
+    caption_es: "Teaser de atleta"
+  - youtubeId: "ScMzIvxBSi4"
+    poster: "../../assets/projects/dragons-back.jpg"
+    caption: "Behind the scenes"
+    caption_es: "Detrás de escena"
+gallery:
+  - "../../assets/projects/altitude-line.jpg"
+  - "../../assets/projects/the-long-way.jpg"
+  - "../../assets/projects/dragons-back.jpg"
+  - "../../assets/projects/headwind.jpg"
 ---
 
 The best brand film is one a viewer would watch even if the brand wasn't paying

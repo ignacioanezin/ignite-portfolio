@@ -1,8 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import YouTubeFacade from '@/components/YouTubeFacade.astro';
+import StillsSlider from '@/components/StillsSlider.astro';
 import T from '@/components/T.astro';
 import { SITE } from '@/lib/site';
 
@@ -203,23 +203,42 @@ const breadcrumbSchema = {
       </div>
     </div>
 
-    <!-- Optional gallery. -->
+    <!-- Optional vertical cutdowns (9:16) — the social deliverables. -->
+    {
+      data.verticals && data.verticals.length > 0 && (
+        <div class="container-rail pb-12 md:pb-16">
+          <p class="mono-label mb-5 text-ink-faint" data-reveal>
+            <T k="cs.verticals" />
+          </p>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {data.verticals.map((v) => (
+              <figure data-reveal>
+                <YouTubeFacade
+                  youtubeId={v.youtubeId}
+                  title={data.title}
+                  poster={v.poster}
+                  aspect="portrait"
+                />
+                {v.caption && (
+                  <figcaption class="mono-label mt-2.5 text-ink-faint">
+                    <T en={v.caption} es={v.caption_es ?? v.caption} />
+                  </figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    <!-- Optional stills — large horizontal reel (slider) so each frame reads big. -->
     {
       data.gallery && data.gallery.length > 0 && (
         <div class="container-rail pb-16 md:pb-24">
-          <div class="grid gap-4 sm:grid-cols-2">
-            {data.gallery.map((img, i) => (
-              <Image
-                src={img}
-                alt={`${data.title} — still ${i + 1}`}
-                widths={[480, 800, 1200]}
-                sizes="(min-width: 640px) 50vw, 100vw"
-                loading="lazy"
-                class="w-full"
-                data-reveal
-              />
-            ))}
-          </div>
+          <p class="mono-label mb-5 text-ink-faint" data-reveal>
+            <T k="cs.stills" />
+          </p>
+          <StillsSlider images={data.gallery} title={data.title} />
         </div>
       )
     }
