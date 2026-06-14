@@ -1,13 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import YouTubeFacade from '@/components/YouTubeFacade.astro';
+import StillsSlider from '@/components/StillsSlider.astro';
 import T from '@/components/T.astro';
 import { SITE } from '@/lib/site';
 
-// One static page per project. `id` is the filename slug (matches ProjectCard's
-// /work/{id} links).
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return projects.map((project) => ({
@@ -19,12 +17,9 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { data } = project;
 
-// Optional author's-note body (markdown under the frontmatter).
 const { Content } = await render(project);
 
-// The case-study spine, in brief order. Result is rendered only when present
-// (honesty rule: no invented outcomes). Long-form bodies fall back to English
-// when a Spanish translation isn't supplied yet.
+// Case-study spine, in brief order. Result only when present (honesty).
 const sections = [
   { key: 'cs.challenge', en: data.challenge, es: data.challenge_es ?? data.challenge },
   { key: 'cs.strategy', en: data.strategy, es: data.strategy_es ?? data.strategy },
@@ -39,14 +34,21 @@ const deliverables = data.deliverables.map((d, i) => ({
   es: data.deliverables_es?.[i] ?? d,
 }));
 
-const meta = [
-  { key: 'cs.role', value: data.role },
-  { key: 'cs.year', value: String(data.year) },
-  { key: 'cs.location', value: data.location },
-  ...(data.client ? [{ key: 'cs.client', value: data.client }] : []),
-];
+// "Splits" — production data strip. Only populated fields render (honesty).
+// `accent` flags the numeric/timecode values rendered in flare.
+const splits = [
+  { label: 'Role', value: data.role },
+  { label: 'Year', value: String(data.year), accent: true },
+  { label: 'Location', value: data.location },
+  ...(data.client ? [{ label: 'Client', value: data.client }] : []),
+  ...(data.tcIn ? [{ label: 'TC In', value: data.tcIn, accent: true }] : []),
+  ...(data.tcOut ? [{ label: 'TC Out', value: data.tcOut, accent: true }] : []),
+  ...(data.lens ? [{ label: 'Lens', value: data.lens }] : []),
+  ...(data.elevationGain
+    ? [{ label: 'D+ Vert', value: data.elevationGain, accent: true }]
+    : []),
+] as { label: string; value: string; accent?: boolean }[];
 
-// JSON-LD: a VideoObject helps the case study surface as rich media.
 const videoSchema = {
   '@context': 'https://schema.org',
   '@type': 'VideoObject',
@@ -58,18 +60,12 @@ const videoSchema = {
   creator: { '@type': 'Person', name: SITE.name },
 };
 
-// BreadcrumbList: Home > Work > {project} — richer search-result trails.
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: 'Work',
-      item: new URL('/work', SITE.url).href,
-    },
+    { '@type': 'ListItem', position: 2, name: 'Work', item: new URL('/work', SITE.url).href },
     {
       '@type': 'ListItem',
       position: 3,
@@ -86,44 +82,36 @@ const breadcrumbSchema = {
   descriptionEs={data.excerpt_es ?? data.excerpt}
   ogType="article"
 >
-  <script
-    type="application/ld+json"
-    set:html={JSON.stringify(videoSchema)}
-    slot="head"
-  />
-  <script
-    type="application/ld+json"
-    set:html={JSON.stringify(breadcrumbSchema)}
-    slot="head"
-  />
+  <script type="application/ld+json" set:html={JSON.stringify(videoSchema)} slot="head" />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} slot="head" />
 
   <article>
-    <!-- Header — LIGHT. -->
+    <!-- Header. -->
     <header class="container-rail pt-32 pb-10 md:pt-40 md:pb-14">
       <a
         href="/work"
-        class="group inline-flex items-center gap-2 text-sm font-medium text-ink-dim transition-colors hover:text-ink"
+        class="group mono-label inline-flex items-center gap-2 text-flare transition-opacity hover:opacity-70"
         data-reveal
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" class="transition-transform group-hover:-translate-x-1">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="transition-transform group-hover:-translate-x-1">
           <path d="M13 8H3M7 4L3 8l4 4" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
         <T k="cs.back" />
       </a>
 
-      <p class="eyebrow mt-8 mb-4" data-reveal><T k={`cat.${data.category}`} /></p>
+      <p class="eyebrow eyebrow-tick mt-8 mb-4" data-reveal><T k={`cat.${data.category}`} /></p>
       <h1
-        class="max-w-4xl font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
+        class="max-w-5xl font-display text-5xl font-bold uppercase leading-[0.9] tracking-tight md:text-8xl"
         data-reveal
       >
         {data.title}
       </h1>
-      <p class="mt-6 max-w-2xl text-xl leading-snug text-ink-dim" data-reveal>
+      <p class="mt-6 max-w-2xl text-xl font-medium leading-snug text-ink-dim" data-reveal>
         <T en={data.excerpt} es={data.excerpt_es ?? data.excerpt} />
       </p>
     </header>
 
-    <!-- Video — facade keeps it off the critical path. -->
+    <!-- Video. -->
     <div class="container-rail" data-reveal>
       <YouTubeFacade
         youtubeId={data.youtubeId}
@@ -132,18 +120,21 @@ const breadcrumbSchema = {
       />
     </div>
 
-    <!-- Meta rail. -->
+    <!-- Splits — production data strip. -->
     <div class="container-rail mt-8 md:mt-10" data-reveal>
-      <dl
-        class="grid grid-cols-2 gap-x-6 gap-y-6 border-y border-line py-6 sm:grid-cols-4"
-      >
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-6 border-y-2 border-ink py-6 sm:grid-cols-4">
         {
-          meta.map((m) => (
+          splits.map((s) => (
             <div>
-              <dt class="text-xs uppercase tracking-wider text-ink-faint">
-                <T k={m.key} />
-              </dt>
-              <dd class="mt-1.5 text-sm font-medium text-ink">{m.value}</dd>
+              <dt class="mono-label text-ink-faint">{s.label}</dt>
+              <dd
+                class:list={[
+                  'mono mt-1.5 text-base font-medium tracking-[0.02em]',
+                  s.accent ? 'text-flare' : 'text-ink',
+                ]}
+              >
+                {s.value}
+              </dd>
             </div>
           ))
         }
@@ -154,7 +145,7 @@ const breadcrumbSchema = {
     <div class="container-rail py-16 md:py-24">
       <div class="grid gap-x-16 gap-y-12 lg:grid-cols-[1fr_1.4fr]">
         <div class="lg:sticky lg:top-28 lg:self-start" data-reveal>
-          <h2 class="text-3xl font-medium tracking-tight md:text-4xl">
+          <h2 class="text-3xl font-bold uppercase leading-[0.95] tracking-tight md:text-5xl">
             <T k="cs.spine_h2" />
           </h2>
         </div>
@@ -163,7 +154,7 @@ const breadcrumbSchema = {
           {
             sections.map((s) => (
               <section data-reveal>
-                <h3 class="eyebrow mb-3"><T k={s.key} /></h3>
+                <h3 class="eyebrow eyebrow-tick mb-3"><T k={s.key} /></h3>
                 <p class="text-lg leading-relaxed text-ink-dim md:text-xl">
                   <T en={s.en} es={s.es} />
                 </p>
@@ -171,22 +162,15 @@ const breadcrumbSchema = {
             ))
           }
 
-          <!-- Deliverables = the content ecosystem. -->
           <section data-reveal>
-            <h3 class="eyebrow mb-4"><T k="cs.ecosystem" /></h3>
+            <h3 class="eyebrow eyebrow-tick mb-4"><T k="cs.ecosystem" /></h3>
             <ul class="space-y-3">
               {
                 deliverables.map((d) => (
                   <li class="flex gap-3 text-lg leading-relaxed text-ink-dim">
                     <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.6"
-                      aria-hidden="true"
-                      class="mt-1 shrink-0 text-ink"
+                      width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                      stroke-width="2.2" aria-hidden="true" class="mt-1 shrink-0 text-flare"
                     >
                       <path d="M4 10.5l3.5 3.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
@@ -201,7 +185,7 @@ const breadcrumbSchema = {
             data.tags && data.tags.length > 0 && (
               <ul class="flex flex-wrap gap-2" data-reveal>
                 {data.tags.map((tag) => (
-                  <li class="rounded-full border border-line px-3 py-1 text-xs uppercase tracking-wider text-ink-faint">
+                  <li class="mono-label rounded-full border-2 border-ink px-3 py-1.5 text-ink">
                     {tag}
                   </li>
                 ))}
@@ -209,9 +193,8 @@ const breadcrumbSchema = {
             )
           }
 
-          {/* Author's note (markdown body), if any. */}
           <div
-            class="prose-note border-t border-line pt-8 text-lg italic leading-relaxed text-ink-dim"
+            class="prose-note border-t-2 border-ink pt-8 text-lg italic leading-relaxed text-ink-dim"
             data-reveal
           >
             <Content />
@@ -220,45 +203,64 @@ const breadcrumbSchema = {
       </div>
     </div>
 
-    <!-- Optional gallery. -->
+    <!-- Optional vertical cutdowns (9:16) — the social deliverables. -->
     {
-      data.gallery && data.gallery.length > 0 && (
-        <div class="container-rail pb-16 md:pb-24">
-          <div class="grid gap-4 sm:grid-cols-2">
-            {data.gallery.map((img, i) => (
-              <Image
-                src={img}
-                alt={`${data.title} — still ${i + 1}`}
-                widths={[480, 800, 1200]}
-                sizes="(min-width: 640px) 50vw, 100vw"
-                loading="lazy"
-                class="w-full rounded-lg"
-                data-reveal
-              />
+      data.verticals && data.verticals.length > 0 && (
+        <div class="container-rail pb-12 md:pb-16">
+          <p class="mono-label mb-5 text-ink-faint" data-reveal>
+            <T k="cs.verticals" />
+          </p>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {data.verticals.map((v) => (
+              <figure data-reveal>
+                <YouTubeFacade
+                  youtubeId={v.youtubeId}
+                  title={data.title}
+                  poster={v.poster}
+                  aspect="portrait"
+                />
+                {v.caption && (
+                  <figcaption class="mono-label mt-2.5 text-ink-faint">
+                    <T en={v.caption} es={v.caption_es ?? v.caption} />
+                  </figcaption>
+                )}
+              </figure>
             ))}
           </div>
         </div>
       )
     }
 
-    <!-- CTA — DARK close. -->
-    <section class="bg-ink text-bone">
+    <!-- Optional stills — large horizontal reel (slider) so each frame reads big. -->
+    {
+      data.gallery && data.gallery.length > 0 && (
+        <div class="container-rail pb-16 md:pb-24">
+          <p class="mono-label mb-5 text-ink-faint" data-reveal>
+            <T k="cs.stills" />
+          </p>
+          <StillsSlider images={data.gallery} title={data.title} />
+        </div>
+      )
+    }
+
+    <!-- CTA — flare colour-field close. -->
+    <section class="bg-flare text-paper">
       <div class="container-rail py-20 md:py-28">
         <div class="mx-auto max-w-2xl text-center" data-reveal>
-          <h2 class="text-3xl font-medium tracking-tight md:text-5xl">
+          <h2 class="text-4xl font-bold uppercase leading-[0.95] tracking-tight md:text-6xl">
             <T k="cs.cta_h2" />
           </h2>
-          <p class="mx-auto mt-5 max-w-lg text-lg text-bone-dim">
+          <p class="mx-auto mt-5 max-w-lg text-lg text-paper/90">
             <T k="cs.cta_body" />
           </p>
           <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <a href="/contact" class="btn-bone" data-magnetic>
+            <a href="/contact" class="btn-paper" data-magnetic>
               <T k="cta.start" />
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </a>
-            <a href="/work" class="btn-ghost-dark"><T k="cs.more" /></a>
+            <a href="/work" class="btn-ghost-paper"><T k="cs.more" /></a>
           </div>
         </div>
       </div>

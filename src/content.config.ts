@@ -24,6 +24,14 @@ const projects = defineCollection({
       previewClip: z.string().optional(), // muted hover loop (mp4/webm) in /public
       excerpt: z.string(), // one strategic line for the grid
 
+      // Film-slate metadata (optional → renders only when present, honesty rule).
+      // tcIn/tcOut are the piece's stylised in/out timecodes; lens + elevationGain
+      // (D+ vertical) are production facts. Leave blank where unknown.
+      tcIn: z.string().optional(), // e.g. "00:00:00:00"
+      tcOut: z.string().optional(), // e.g. "00:05:12:08"
+      lens: z.string().optional(), // e.g. "24mm · 50mm"
+      elevationGain: z.string().optional(), // e.g. "2,400 m"
+
       // Case-study body.
       challenge: z.string(), // the client's problem
       strategy: z.string(), // the creative approach
@@ -40,6 +48,20 @@ const projects = defineCollection({
       production_es: z.string().optional(),
       result_es: z.string().optional(),
       deliverables_es: z.array(z.string()).optional(),
+
+      // Vertical social cutdowns (9:16). Optional → render only when present
+      // (honesty). Each is a YouTube/Shorts id + a local poster still, shown as
+      // a click-to-play lite-embed like the main film.
+      verticals: z
+        .array(
+          z.object({
+            youtubeId: z.string(),
+            poster: image(),
+            caption: z.string().optional(),
+            caption_es: z.string().optional(),
+          })
+        )
+        .optional(),
 
       gallery: z.array(image()).optional(),
       featured: z.boolean().default(false),

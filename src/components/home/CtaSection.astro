@@ -3,27 +3,27 @@ import { SITE } from '@/lib/site';
 import T from '@/components/T.astro';
 ---
 
-<!-- DARK — the page ends strong. -->
-<section aria-label="Work with me" class="bg-ink text-bone">
+<!-- The page ends LOUD — a full flare colour-field. -->
+<section aria-label="Work with me" class="bg-flare text-paper">
   <div class="container-rail py-24 md:py-36">
     <div class="mx-auto max-w-3xl text-center" data-reveal>
-      <p class="eyebrow mb-5 text-bone-faint"><T k="cta.eyebrow" /></p>
+      <p class="mono-label mb-6 inline-block text-paper/80"><T k="cta.eyebrow" /></p>
       <h2
-        class="text-4xl font-medium leading-[1.04] tracking-tight md:text-6xl"
+        class="text-5xl font-bold uppercase leading-[0.95] tracking-tight md:text-7xl"
       >
         <T k="cta.h2" />
       </h2>
-      <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-bone-dim">
+      <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-paper/90">
         <T k="cta.body" />
       </p>
       <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
-        <a href="/contact" class="btn-bone" data-magnetic>
+        <a href="/contact" class="btn-paper" data-magnetic>
           <T k="cta.start" />
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
-        <a href={`mailto:${SITE.email}`} class="btn-ghost-dark">
+        <a href={`mailto:${SITE.email}`} class="btn-ghost-paper">
           {SITE.email}
         </a>
       </div>

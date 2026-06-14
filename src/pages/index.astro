@@ -8,17 +8,24 @@ import FeaturedWork from '@/components/home/FeaturedWork.astro';
 import Process from '@/components/home/Process.astro';
 import BlogTeaser from '@/components/home/BlogTeaser.astro';
 import CtaSection from '@/components/home/CtaSection.astro';
+import Marquee from '@/components/Marquee.astro';
 
-// Reel-mode hero is dark → nav chrome flips to light text.
+const credits = [
+  'DIRECTOR',
+  'DP',
+  'EDITOR',
+  'COLOR',
+  'ONE PRODUCTION → A SEASON OF CONTENT',
+];
 ---
 
 <BaseLayout darkChrome={heroIsReel}>
-  {/* Order matters (per brief):
-      hero → proof (metrics + clients) → featured work → process → blog → CTA */}
+  {/* hero → proof (metrics + clients) → featured work → process → blog → CTA */}
   <Hero />
   <MetricsStrip />
   <ClientsWall />
   <FeaturedWork />
+  <Marquee items={credits} variant="ink" speed={34} reverse />
   <Process />
   <BlogTeaser />
   <CtaSection />

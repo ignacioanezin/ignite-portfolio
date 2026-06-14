@@ -18,9 +18,9 @@ const headingEs: Record<string, string> = {
 
 {
   hasClients && (
-    <section aria-label={CLIENTS_HEADING} class="bg-ink text-bone">
+    <section aria-label={CLIENTS_HEADING}>
       <div class="container-rail py-14 md:py-20">
-        <p class="eyebrow mb-9 text-center text-bone-faint" data-reveal>
+        <p class="eyebrow eyebrow-tick mb-9 flex w-full justify-center" data-reveal>
           <T en={CLIENTS_HEADING} es={headingEs[CLIENTS_HEADING] ?? CLIENTS_HEADING} />
         </p>
 
@@ -55,9 +55,9 @@ const headingEs: Record<string, string> = {
   /* Normalise mismatched logos to one muted tone; brighten on hover so the set
      reads as a single cohesive group. */
   .logo {
-    color: var(--color-bone);
-    opacity: 0.45;
-    transition: opacity 0.4s var(--ease-cinematic);
+    color: var(--color-ink);
+    opacity: 0.55;
+    transition: opacity 0.4s var(--ease-sport);
   }
   .logo :global(svg) {
     height: 2.25rem;

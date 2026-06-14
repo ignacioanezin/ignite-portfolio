@@ -4,18 +4,15 @@ import { SITE } from '@/lib/site';
 import { ui } from '@/i18n/ui';
 import T from '@/components/T.astro';
 
-// Static site → the form posts to a third-party form endpoint (Formspree-style
-// placeholder). Swap FORM_ENDPOINT for your real one (see README). The form
-// works without JavaScript; a tiny enhancement just shows an inline success
-// state when the endpoint returns JSON.
+// Static site → the form posts to a third-party endpoint (Formspree-style
+// placeholder). Swap FORM_ENDPOINT for your real one (see README). Works without
+// JS; a tiny enhancement shows an inline success state when the endpoint returns
+// JSON.
 const FORM_ENDPOINT = 'https://formspree.io/f/your-form-id';
 
-// Interpolated "based in" line, both languages.
 const basedEn = `${SITE.baseLocation} · shooting across ${SITE.shootingRegion}`;
 const basedEs = `${SITE.baseLocation} · filmando por ${SITE.shootingRegion}`;
 
-// Status strings for the client script, both languages (picked at runtime by
-// the active html[data-lang]).
 const statusI18n = {
   en: {
     unconfigured: ui.en['contact.status_unconfigured'],
@@ -42,9 +39,9 @@ const statusI18n = {
     <div class="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
       <!-- Left: pitch + direct details. -->
       <div data-reveal>
-        <p class="eyebrow mb-4"><T k="contact.eyebrow" /></p>
+        <p class="eyebrow eyebrow-tick mb-5"><T k="contact.eyebrow" /></p>
         <h1
-          class="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-6xl"
+          class="font-display text-5xl font-bold uppercase leading-[0.9] tracking-tight md:text-7xl"
         >
           <T k="contact.h1" />
         </h1>
@@ -56,10 +53,7 @@ const statusI18n = {
           <div>
             <dt class="eyebrow mb-2"><T k="contact.email_label" /></dt>
             <dd>
-              <a
-                href={`mailto:${SITE.email}`}
-                class="link-underline text-lg text-ink"
-              >
+              <a href={`mailto:${SITE.email}`} class="link-underline text-lg font-medium text-ink">
                 {SITE.email}
               </a>
             </dd>
@@ -71,7 +65,7 @@ const statusI18n = {
                 href={SITE.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="link-underline text-lg text-ink"
+                class="link-underline text-lg font-medium text-ink"
               >
                 {SITE.social.instagramHandle}
               </a>
@@ -98,7 +92,7 @@ const statusI18n = {
           id="contact-form"
           action={FORM_ENDPOINT}
           method="POST"
-          class="rounded-xl bg-bone-raise p-6 ring-1 ring-line md:p-8"
+          class="border-2 border-ink bg-paper-bright p-6 md:p-8"
         >
           <!-- Honeypot: bots fill it, humans never see it. -->
           <div class="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
@@ -110,71 +104,40 @@ const statusI18n = {
 
           <div class="space-y-5">
             <div>
-              <label for="name" class="mb-2 block text-sm font-medium text-ink">
+              <label for="name" class="mb-2 block text-sm font-semibold text-ink">
                 <T k="contact.name" />
               </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                autocomplete="name"
-                class="form-field"
-              />
+              <input id="name" name="name" type="text" required autocomplete="name" class="form-field" />
             </div>
 
             <div>
-              <label for="email" class="mb-2 block text-sm font-medium text-ink">
+              <label for="email" class="mb-2 block text-sm font-semibold text-ink">
                 <T k="contact.email_label" />
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autocomplete="email"
-                class="form-field"
-              />
+              <input id="email" name="email" type="email" required autocomplete="email" class="form-field" />
             </div>
 
             <div>
-              <label
-                for="message"
-                class="mb-2 block text-sm font-medium text-ink"
-              >
+              <label for="message" class="mb-2 block text-sm font-semibold text-ink">
                 <T k="contact.message" />
               </label>
-              <textarea
-                id="message"
-                name="message"
-                rows="5"
-                required
-                class="form-field resize-y"
-              ></textarea>
+              <textarea id="message" name="message" rows="5" required class="form-field resize-y"></textarea>
             </div>
           </div>
 
-          <button type="submit" class="btn-ink mt-6 w-full justify-center">
+          <button type="submit" class="btn-ink mt-6 w-full justify-center" data-magnetic>
             <T k="contact.send" />
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </button>
 
-          <p
-            id="form-status"
-            role="status"
-            aria-live="polite"
-            class="mt-4 text-sm text-ink-dim"
-          >
-          </p>
+          <p id="form-status" role="status" aria-live="polite" class="mt-4 text-sm text-ink-dim"></p>
 
           <p class="mt-4 text-xs leading-relaxed text-ink-faint">
-            <T
-              en="Prefer email? Write to "
-              es="¿Preferís email? Escribime directo a "
-            /><a href={`mailto:${SITE.email}`} class="link-underline text-ink-dim"
-              >{SITE.email}</a
+            <T en="Prefer email? Write to " es="¿Preferís email? Escribime directo a " /><a
+              href={`mailto:${SITE.email}`}
+              class="link-underline text-ink-dim">{SITE.email}</a
             ><T en=" directly." es="." />
           </p>
         </form>
@@ -186,40 +149,36 @@ const statusI18n = {
 <style>
   .form-field {
     width: 100%;
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-line);
-    background: var(--color-bone);
+    border: 1.5px solid var(--color-ink);
+    background: var(--color-paper);
     padding: 0.7rem 0.9rem;
     font-size: 0.95rem;
     color: var(--color-ink);
-    transition: border-color 0.3s var(--ease-cinematic);
+    transition: border-color 0.25s var(--ease-sport),
+      box-shadow 0.25s var(--ease-sport);
   }
   .form-field::placeholder {
     color: var(--color-ink-faint);
   }
   .form-field:focus {
     outline: none;
-    border-color: var(--color-ink);
+    border-color: var(--color-flare);
+    box-shadow: inset 0 0 0 1px var(--color-flare);
   }
 </style>
 
 <script>
   // Progressive enhancement: keep the visitor on-page on success. Without JS the
-  // form still posts normally to the endpoint. Status strings are localised from
-  // the embedded #contact-i18n payload using the active language.
+  // form still posts normally. Status strings localised from #contact-i18n.
   function initContactForm() {
-    const form = document.getElementById(
-      'contact-form'
-    ) as HTMLFormElement | null;
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
     const status = document.getElementById('form-status');
     if (!form || form.dataset.bound) return;
     form.dataset.bound = 'true';
 
     const t = (key: 'unconfigured' | 'sending' | 'success' | 'error') => {
       const lang =
-        document.documentElement.getAttribute('data-lang') === 'es'
-          ? 'es'
-          : 'en';
+        document.documentElement.getAttribute('data-lang') === 'es' ? 'es' : 'en';
       try {
         const data = JSON.parse(
           document.getElementById('contact-i18n')?.textContent || '{}'

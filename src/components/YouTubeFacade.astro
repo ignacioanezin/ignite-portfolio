@@ -7,27 +7,40 @@ interface Props {
   title: string;
   /** Local poster image (optimized) shown until the viewer clicks play. */
   poster: ImageMetadata;
+  /** Frame ratio: landscape 16:9 (main film) or portrait 9:16 (vertical clip). */
+  aspect?: 'landscape' | 'portrait';
 }
 
-const { youtubeId, title, poster } = Astro.props;
+const { youtubeId, title, poster, aspect = 'landscape' } = Astro.props;
+
+const isPortrait = aspect === 'portrait';
+const aspectClass = isPortrait ? 'aspect-[9/16]' : 'aspect-video';
+// Portrait cards are narrow (≤25vw), so the poster + play control are sized down.
+const posterWidths = isPortrait ? [240, 360, 480, 640] : [480, 800, 1280, 1600];
+const posterSizes = isPortrait
+  ? '(min-width: 768px) 25vw, 50vw'
+  : '(min-width: 768px) 80vw, 100vw';
+const buttonClass = isPortrait ? 'h-12 w-12' : 'h-20 w-20';
+const iconSize = isPortrait ? 18 : 26;
 
 // Facade / lite-embed: ship only a poster + button. The heavy YouTube iframe is
 // injected on click (see inline script) so it never costs us LCP or a network
 // request on load. Privacy-friendly nocookie host; rel=0&modestbranding=1 per
 // brief. Implemented as a tiny vanilla enhancement (like ProjectCard's hover
 // script) rather than a React island — it's a one-shot DOM swap, not stateful
-// UI, and this keeps the <Image> poster fully optimized.
+// UI, and this keeps the <Image> poster fully optimized. Serves the main 16:9
+// film and the 9:16 vertical cutdowns via the `aspect` prop.
 ---
 
 <div
-  class="yt-facade group relative aspect-video overflow-hidden rounded-lg bg-ink ring-1 ring-bone/10"
+  class:list={['yt-facade group relative overflow-hidden bg-ink', aspectClass]}
   data-yt-id={youtubeId}
 >
   <Image
     src={poster}
     alt={`${title} — video still`}
-    widths={[480, 800, 1280, 1600]}
-    sizes="(min-width: 768px) 80vw, 100vw"
+    widths={posterWidths}
+    sizes={posterSizes}
     loading="lazy"
     class="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
   />
@@ -45,9 +58,12 @@ const { youtubeId, title, poster } = Astro.props;
     aria-label={`Play video: ${title}`}
   >
     <span
-      class="flex h-20 w-20 items-center justify-center rounded-full bg-bone/95 text-ink shadow-lg backdrop-blur-sm transition-transform duration-500 group-hover:scale-105"
+      class:list={[
+        'flex items-center justify-center rounded-full bg-flare text-paper shadow-lg transition-transform duration-500 group-hover:scale-105',
+        buttonClass,
+      ]}
     >
-      <svg width="26" height="26" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <svg width={iconSize} height={iconSize} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
         <path d="M4 2.5v11l9-5.5z"></path>
       </svg>
     </span>

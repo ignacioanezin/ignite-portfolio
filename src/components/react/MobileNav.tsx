@@ -87,7 +87,7 @@ export default function MobileNav({ links, menuLabels, currentPath }: Props) {
 
       {open && (
         <div
-          className="fixed inset-0 z-[65] flex flex-col bg-bone/98 backdrop-blur-sm"
+          className="fixed inset-0 z-[65] flex flex-col bg-paper/98 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
@@ -98,10 +98,10 @@ export default function MobileNav({ links, menuLabels, currentPath }: Props) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className={`font-display text-5xl font-medium tracking-tight transition-opacity ${
+                className={`font-display text-6xl font-bold uppercase tracking-tight transition-colors ${
                   isActive(link.href)
-                    ? 'text-ink opacity-100'
-                    : 'text-ink opacity-60 hover:opacity-100'
+                    ? 'text-flare'
+                    : 'text-ink hover:text-flare'
                 }`}
                 style={{
                   // staggered fade-in for the slow-camera feel

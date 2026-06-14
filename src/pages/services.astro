@@ -3,8 +3,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import T from '@/components/T.astro';
 import { ui } from '@/i18n/ui';
 
-// Three tiers packaged around OUTCOMES, not deliverables, and no pricing — the
-// conversation sets scope. Copy lives in the i18n dictionary (svc.*).
 const tiers = [
   { id: 'embedded', featured: false },
   { id: 'campaign', featured: true },
@@ -18,22 +16,22 @@ const tiers = [
   description={ui.en['services.meta_desc']}
   descriptionEs={ui.es['services.meta_desc']}
 >
-  <!-- Lead — LIGHT. -->
+  <!-- Lead. -->
   <section class="container-rail pt-32 pb-12 md:pt-40 md:pb-16">
-    <div class="max-w-3xl" data-reveal>
-      <p class="eyebrow mb-4"><T k="services.eyebrow" /></p>
+    <div class="max-w-4xl" data-reveal>
+      <p class="eyebrow eyebrow-tick mb-5"><T k="services.eyebrow" /></p>
       <h1
-        class="font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
+        class="font-display text-5xl font-bold uppercase leading-[0.9] tracking-tight md:text-8xl"
       >
         <T k="services.h1" />
       </h1>
-      <p class="mt-6 max-w-xl text-lg leading-relaxed text-ink-dim">
+      <p class="mt-7 max-w-xl text-lg font-medium leading-relaxed text-ink-dim">
         <T k="services.intro" />
       </p>
     </div>
   </section>
 
-  <!-- Tiers — LIGHT cards. -->
+  <!-- Tiers. Featured = inverted ink card (emphasis by colour, not height). -->
   <section class="container-rail pb-20 md:pb-28">
     <div class="grid gap-6 lg:grid-cols-3" data-reveal-group>
       {
@@ -41,23 +39,16 @@ const tiers = [
           <div
             data-reveal
             class:list={[
-              'flex flex-col rounded-xl p-7 md:p-8',
-              tier.featured
-                ? 'bg-ink text-bone'
-                : 'bg-bone-raise ring-1 ring-line',
+              'flex flex-col border-2 border-ink p-7 md:p-8',
+              tier.featured ? 'bg-ink text-paper' : 'bg-paper-bright',
             ]}
           >
             <div class="flex items-center justify-between gap-3">
-              <h2
-                class:list={[
-                  'text-2xl font-medium tracking-tight',
-                  tier.featured ? 'text-bone' : 'text-ink',
-                ]}
-              >
+              <h2 class="text-2xl font-bold uppercase tracking-tight">
                 <T k={`svc.${tier.id}.name`} />
               </h2>
               {tier.featured && (
-                <span class="rounded-full border border-bone/40 px-3 py-1 text-[0.7rem] font-medium uppercase tracking-wider text-bone">
+                <span class="mono-label rounded-full bg-flare px-2.5 py-1 text-paper">
                   <T k="services.most_booked" />
                 </span>
               )}
@@ -65,8 +56,8 @@ const tiers = [
 
             <p
               class:list={[
-                'mt-2 text-sm font-medium',
-                tier.featured ? 'text-bone-dim' : 'text-ink-faint',
+                'mono-label mt-3',
+                tier.featured ? 'text-paper/60' : 'text-ink-faint',
               ]}
             >
               <T k={`svc.${tier.id}.for`} />
@@ -75,7 +66,7 @@ const tiers = [
             <p
               class:list={[
                 'mt-5 text-lg leading-relaxed',
-                tier.featured ? 'text-bone-dim' : 'text-ink-dim',
+                tier.featured ? 'text-paper/85' : 'text-ink-dim',
               ]}
             >
               <T k={`svc.${tier.id}.outcome`} />
@@ -86,21 +77,12 @@ const tiers = [
                 <li
                   class:list={[
                     'flex gap-3 text-sm leading-relaxed',
-                    tier.featured ? 'text-bone-dim' : 'text-ink-dim',
+                    tier.featured ? 'text-paper/85' : 'text-ink-dim',
                   ]}
                 >
                   <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.6"
-                    aria-hidden="true"
-                    class:list={[
-                      'mt-0.5 shrink-0',
-                      tier.featured ? 'text-bone' : 'text-ink',
-                    ]}
+                    width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                    stroke-width="2.2" aria-hidden="true" class="mt-0.5 shrink-0 text-flare"
                   >
                     <path d="M4 10.5l3.5 3.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
@@ -113,7 +95,7 @@ const tiers = [
               href="/contact"
               class:list={[
                 'mt-8 w-full justify-center',
-                tier.featured ? 'btn-bone' : 'btn-ghost',
+                tier.featured ? 'btn-paper' : 'btn-ink',
               ]}
             >
               <T k="services.tier_cta" />
@@ -124,12 +106,12 @@ const tiers = [
     </div>
   </section>
 
-  <!-- Reassurance / how it works pointer — LIGHT. -->
-  <section class="border-t border-line bg-bone-raise/60">
+  <!-- Reassurance. -->
+  <section class="border-t-2 border-ink">
     <div class="container-rail py-16 md:py-20">
       <div class="grid items-center gap-8 md:grid-cols-[1.4fr_1fr]" data-reveal>
         <div>
-          <h2 class="text-2xl font-medium tracking-tight md:text-3xl">
+          <h2 class="text-3xl font-bold uppercase leading-[0.95] tracking-tight md:text-4xl">
             <T k="services.reassure_h2" />
           </h2>
           <p class="mt-3 max-w-xl text-lg leading-relaxed text-ink-dim">
@@ -137,9 +119,9 @@ const tiers = [
           </p>
         </div>
         <div class="flex md:justify-end">
-          <a href="/contact" class="btn-ink">
+          <a href="/contact" class="btn-ink" data-magnetic>
             <T k="services.reassure_cta" />
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </a>

@@ -1,19 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import ProjectCard from '@/components/ProjectCard.astro';
+import WorkPoster from '@/components/WorkPoster.astro';
 import WorkFilter from '@/components/react/WorkFilter.tsx';
 import T from '@/components/T.astro';
 import { CATEGORY_META, type CategoryKey } from '@/content.config';
 import { ui } from '@/i18n/ui';
 
-// Full curated grid. Newest first; equal hierarchy (no hero card), per brief.
+// Full curated start list. Newest first; equal hierarchy.
 const projects = (await getCollection('projects')).sort(
   (a, b) => b.data.year - a.data.year
 );
 
-// Build category tabs with live counts — only categories that actually have
-// work appear (no empty filters). Order follows CATEGORY_META.
+// Category tabs with live counts — only categories that actually have work
+// appear (no empty filters). Order follows CATEGORY_META.
 const counts = projects.reduce<Record<string, number>>((acc, p) => {
   acc[p.data.category] = (acc[p.data.category] ?? 0) + 1;
   return acc;
@@ -28,6 +28,8 @@ const categories = (Object.keys(CATEGORY_META) as CategoryKey[])
     es: ui.es[`cat.${key}`],
     count: counts[key],
   }));
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <BaseLayout
@@ -38,19 +40,19 @@ const categories = (Object.keys(CATEGORY_META) as CategoryKey[])
 >
   <section class="container-rail pt-32 pb-20 md:pt-40 md:pb-28">
     <!-- Header -->
-    <div class="max-w-3xl" data-reveal>
-      <p class="eyebrow mb-4"><T k="work.eyebrow" /></p>
+    <div class="max-w-4xl" data-reveal>
+      <p class="eyebrow eyebrow-tick mb-5"><T k="work.eyebrow" /></p>
       <h1
-        class="font-display text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl"
+        class="font-display text-5xl font-bold uppercase leading-[0.9] tracking-tight md:text-8xl"
       >
         <T k="work.h1" />
       </h1>
-      <p class="mt-6 max-w-xl text-lg leading-relaxed text-ink-dim">
+      <p class="mt-7 max-w-xl text-lg font-medium leading-relaxed text-ink-dim">
         <T k="work.intro" />
       </p>
     </div>
 
-    <!-- Filter + grid -->
+    <!-- Filter -->
     <div class="mt-12 md:mt-16" data-reveal>
       <WorkFilter
         categories={categories}
@@ -59,23 +61,21 @@ const categories = (Object.keys(CATEGORY_META) as CategoryKey[])
         allEs={ui.es['filter.all']}
         client:idle
       />
-      <p
-        id="work-filter-status"
-        class="sr-only"
-        role="status"
-        aria-live="polite"
-      >
-      </p>
+      <p id="work-filter-status" class="sr-only" role="status" aria-live="polite"></p>
     </div>
 
-    <ul class="mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 md:mt-14" data-reveal-group>
+    <!-- Poster grid — large stills lead; the filter toggles `.hidden` per item. -->
+    <div
+      class="mt-10 grid grid-cols-1 gap-6 md:mt-14 md:grid-cols-2 md:gap-8"
+      data-reveal-group
+    >
       {
         projects.map((project, i) => (
-          <li data-work-item data-category={project.data.category}>
-            <ProjectCard project={project} priority={i < 2} />
-          </li>
+          <div data-work-item data-category={project.data.category}>
+            <WorkPoster project={project} index={pad(i + 1)} priority={i < 2} />
+          </div>
         ))
       }
-    </ul>
+    </div>
   </section>
 </BaseLayout>

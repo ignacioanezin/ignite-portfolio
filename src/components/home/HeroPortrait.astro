@@ -2,57 +2,53 @@
 import { Image } from 'astro:assets';
 import { SITE } from '@/lib/site';
 import T from '@/components/T.astro';
+import Marquee from '@/components/Marquee.astro';
 import portrait from '@/assets/hero/ignacio.png';
 
-// Portrait mode (LIGHT). Desktop: name bottom-left, portrait bleeding off the
-// bottom-right at full contrast. Mobile: name + statement + CTAs on TOP,
-// portrait CENTERED at the bottom, bleeding below the viewport.
+// Kinetic sport hero (LIGHT). A wall of oversized UPPERCASE type, the B&W
+// portrait full-height on the right, a flare CTA, and a flare manifesto marquee
+// running across the bottom — the differentiator made physical motion.
 const [first, last] = SITE.name.split(' ');
+
+const manifestoEn = [
+  'I RUN THE RACES I FILM',
+  'EMBEDDED',
+  'PATAGONIA',
+  'THE ANDES',
+  'ATHLETE—FILMMAKER',
+];
+const manifestoEs = [
+  'CORRO LAS CARRERAS QUE FILMO',
+  'DESDE ADENTRO',
+  'PATAGONIA',
+  'LOS ANDES',
+  'ATLETA—CINEASTA',
+];
 ---
 
 <section
-  class="relative min-h-[100svh] overflow-hidden"
+  class="relative flex min-h-[100svh] flex-col overflow-hidden"
   aria-label="Introduction"
 >
-  <!-- Portrait. Full contrast, no opacity/blend/grayscale filters — clean B&W.
-       Mobile: centered, bottom, bleeding below. Desktop: bottom-right. -->
+  <!-- Legibility wash on the type side (desktop only). -->
   <div
-  class="pointer-events-none absolute bottom-0 left-1/2 z-0
-         h-[44vh] w-[100%] max-w-none
-         -translate-x-1/2
-         sm:h-[50vh]
-         md:bottom-0 md:left-auto md:right-[6%]
-         md:h-[78vh] md:w-1/2
-         md:translate-x-0
-         lg:right-[8%] lg:max-w-2xl"
->
-    <Image
-  src={portrait}
-  alt={`${SITE.name}, athlete-filmmaker`}
-  widths={[480, 768, 1100]}
-  sizes="(min-width: 768px) 50vw, 100vw"
-  loading="eager"
-  fetchpriority="high"
-  class="h-full w-auto max-w-none object-contain object-bottom"
-/>
-  </div>
-
-  <!-- Desktop-only legibility wash on the text side; fully clear before the
-       portrait so it keeps full presence. -->
-  <div
-    class="pointer-events-none absolute inset-0 z-[1] hidden bg-gradient-to-r from-bone from-25% to-transparent to-55% md:block"
+    class="pointer-events-none absolute inset-0 z-[1] hidden bg-gradient-to-r from-paper from-30% via-paper/80 to-transparent to-70% md:block"
     aria-hidden="true"
   >
   </div>
 
-  <!-- Content: top on mobile (pt), bottom-left on desktop (mt-auto). -->
+  <!-- Type wall — first in DOM so it renders above the portrait on mobile. -->
   <div
-    class="container-rail relative z-10 flex min-h-[100svh] flex-col pt-32 pb-10 md:justify-center md:pt-0 md:pb-24"
+    class="container-rail relative z-10 flex flex-col pt-24 pb-4 md:flex-1 md:justify-center md:pt-0 md:pb-44"
   >
     <div data-reveal-group>
+      <p class="eyebrow eyebrow-tick mb-6" data-reveal>
+        <T en="Embedded athlete-filmmaker" es="Atleta y cineasta, desde adentro" />
+      </p>
+
       <h1
-        class="font-display font-medium text-ink"
-        style="font-size: var(--text-display); line-height: var(--text-display--line-height); letter-spacing: var(--text-display--letter-spacing);"
+        class="font-display font-bold uppercase text-ink"
+        style="font-size: var(--text-mega); line-height: var(--text-mega--line-height); letter-spacing: var(--text-mega--letter-spacing);"
         data-reveal="rise"
       >
         <span class="rise-mask">
@@ -62,7 +58,7 @@ const [first, last] = SITE.name.split(' ');
       </h1>
 
       <p
-        class="mt-7 max-w-xl text-balance text-xl leading-snug text-ink-dim md:text-2xl"
+        class="mt-7 max-w-xl text-balance text-xl font-medium leading-snug text-ink-dim md:text-2xl"
         data-reveal
       >
         <T k="site.statement" />
@@ -71,12 +67,42 @@ const [first, last] = SITE.name.split(' ');
       <div class="mt-9 flex flex-wrap items-center gap-4" data-reveal>
         <a href="/work" class="btn-ink" data-magnetic>
           <T k="hero.cta_work" />
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
         <a href="/contact" class="btn-ghost" data-magnetic><T k="hero.cta_contact" /></a>
       </div>
+    </div>
+  </div>
+
+  <!-- Subject — full-contrast B&W. Flows after text on mobile; absolute on desktop. -->
+  <div
+    data-reveal
+    style="--reveal-delay: 0.35s"
+    class="pointer-events-none relative z-0 w-full h-[52vh] pb-16
+           sm:h-[56vh]
+           md:absolute md:bottom-[4.75rem] md:left-auto md:right-[6%] md:h-[68vh] md:w-[44%] md:translate-x-0 md:pb-0
+           lg:right-[8%] lg:max-w-xl"
+  >
+    <Image
+      src={portrait}
+      alt={`${SITE.name}, athlete-filmmaker`}
+      widths={[480, 768, 1100]}
+      sizes="(min-width: 768px) 52vw, 100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="h-full w-auto max-w-none object-contain object-bottom"
+    />
+  </div>
+
+  <!-- Manifesto marquee — the kinetic signature. -->
+  <div class="absolute inset-x-0 bottom-0 z-10">
+    <div data-lang="en">
+      <Marquee items={manifestoEn} variant="flare" speed={26} />
+    </div>
+    <div data-lang="es">
+      <Marquee items={manifestoEs} variant="flare" speed={26} />
     </div>
   </div>
 </section>
