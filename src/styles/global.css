@@ -32,8 +32,8 @@
 
   /* Lone loud accent. `flare` for LARGE type/numerals/fills/graphics; `deep`
      for button fills + small-text-on-accent (AA-safe with paper text). */
-  --color-flare: #a3e635;
-  --color-flare-deep: #65a30d;
+  --color-flare: #65a30d;
+  --color-flare-deep: #528309;
 
   /* Hairlines: heavy ink rules use --color-ink directly; soft where needed. */
   --color-line-soft: #d6d3ca;

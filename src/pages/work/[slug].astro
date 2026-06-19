@@ -34,19 +34,12 @@ const deliverables = data.deliverables.map((d, i) => ({
   es: data.deliverables_es?.[i] ?? d,
 }));
 
-// "Splits" — production data strip. Only populated fields render (honesty).
-// `accent` flags the numeric/timecode values rendered in flare.
+// Production data strip — only the primary row (role, year, location, client).
 const splits = [
   { label: 'Role', value: data.role },
   { label: 'Year', value: String(data.year), accent: true },
   { label: 'Location', value: data.location },
   ...(data.client ? [{ label: 'Client', value: data.client }] : []),
-  ...(data.tcIn ? [{ label: 'TC In', value: data.tcIn, accent: true }] : []),
-  ...(data.tcOut ? [{ label: 'TC Out', value: data.tcOut, accent: true }] : []),
-  ...(data.lens ? [{ label: 'Lens', value: data.lens }] : []),
-  ...(data.elevationGain
-    ? [{ label: 'D+ Vert', value: data.elevationGain, accent: true }]
-    : []),
 ] as { label: string; value: string; accent?: boolean }[];
 
 const videoSchema = {
@@ -120,16 +113,16 @@ const breadcrumbSchema = {
       />
     </div>
 
-    <!-- Splits — production data strip. -->
+    <!-- Production data strip. -->
     <div class="container-rail mt-8 md:mt-10" data-reveal>
-      <dl class="grid grid-cols-2 gap-x-6 gap-y-6 border-y-2 border-ink py-6 sm:grid-cols-4">
+      <dl class="grid grid-cols-2 gap-6 border-y-2 border-ink py-6 md:flex md:gap-6 md:py-6">
         {
           splits.map((s) => (
-            <div>
+            <div class="min-w-0 md:flex-1 md:basis-0">
               <dt class="mono-label text-ink-faint">{s.label}</dt>
               <dd
                 class:list={[
-                  'mono mt-1.5 text-base font-medium tracking-[0.02em]',
+                  'mono mt-1.5 break-words text-base font-medium leading-snug tracking-[0.02em]',
                   s.accent ? 'text-flare' : 'text-ink',
                 ]}
               >
